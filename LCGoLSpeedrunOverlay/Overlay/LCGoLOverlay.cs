@@ -1,11 +1,7 @@
 ﻿using LCGoLOverlayProcess.Game;
+using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LCGoLOverlayProcess.Overlay
 {
@@ -23,7 +19,7 @@ namespace LCGoLOverlayProcess.Overlay
             };
         }
 
-        public void Render(GameInfo game, Device d3d9Device)
+        public void Render(GameInfo game, Device d3d9Device, LiveSplitHelper liveSplitHelper)
         {
             // TODO: Pass in a scaling factor here? At least figure our how overlay scaling will work.
             // TODO: Change OverlayPicker to use the correct Overlay
@@ -32,7 +28,7 @@ namespace LCGoLOverlayProcess.Overlay
                 //overlay.Render(game, d3d9Device);
             } else
             {
-                _overlayLookup[GameState.Other].Render(game, d3d9Device);
+                _overlayLookup[GameState.Other].Render(game, d3d9Device, liveSplitHelper);
             }
         }
     }

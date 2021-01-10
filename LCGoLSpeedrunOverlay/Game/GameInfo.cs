@@ -7,7 +7,7 @@ namespace LCGoLOverlayProcess.Game
 {
     public class GameInfo
     {
-        private readonly Process _gameProcess;
+        private readonly Process _lcgolProcess;
         private readonly ConcurrentDictionary<string, GameLevel> _levelNameLookup;
 
         private const string _lcgolEXEBase = "lcgol.exe";
@@ -58,9 +58,9 @@ namespace LCGoLOverlayProcess.Game
             get; private set;
         }
 
-        public GameInfo(int gameProcessId)
+        public GameInfo(Process lcgolProcess)
         {
-            _gameProcess = Process.GetProcessById(gameProcessId);
+            _lcgolProcess = lcgolProcess;
             // TODO: Populate LevelNameLookup with more checkpoints or find a pattern in checkpoint names. These are only the start level checkpoints.
             _levelNameLookup = new ConcurrentDictionary<string, GameLevel>(StringComparer.OrdinalIgnoreCase)
             {
@@ -108,16 +108,16 @@ namespace LCGoLOverlayProcess.Game
 
         public void Update()
         {
-            _checkpoint.Update(_gameProcess);
-            IsOnEndScreen.Update(_gameProcess);
-            NumberOfPlayers.Update(_gameProcess);
+            _checkpoint.Update(_lcgolProcess);
+            IsOnEndScreen.Update(_lcgolProcess);
+            NumberOfPlayers.Update(_lcgolProcess);
 
-            _gameTime.Update(_gameProcess);
-            _refreshRate.Update(_gameProcess);
-            _vSyncPresentationInterval.Update(_gameProcess);
-            _spLoading.Update(_gameProcess);
-            _mpLoading.Update(_gameProcess);
-            _mpLoading2.Update(_gameProcess);
+            _gameTime.Update(_lcgolProcess);
+            _refreshRate.Update(_lcgolProcess);
+            _vSyncPresentationInterval.Update(_lcgolProcess);
+            _spLoading.Update(_lcgolProcess);
+            _mpLoading.Update(_lcgolProcess);
+            _mpLoading2.Update(_lcgolProcess);
 
             UpdateValidVSyncSettings();
             UpdateGameState();

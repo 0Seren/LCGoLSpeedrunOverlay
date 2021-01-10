@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using WinOSExtensions.Extensions;
 
 namespace LCGoLInjector
 {
@@ -15,7 +16,7 @@ namespace LCGoLInjector
         static void Main()
         {
             string channelName = null;
-            var lcGoLProc = GetProcesses().FirstOrDefault(p => "Lara Croft and the Guardian of Light".Equals(GetApplicationName(p), StringComparison.OrdinalIgnoreCase));
+            var lcGoLProc = GetProcesses().FirstOrDefault(p => "Lara Croft and the Guardian of Light".Equals(p.GetApplicationName(), StringComparison.OrdinalIgnoreCase));
 
             if (lcGoLProc != null)
             {
@@ -50,29 +51,6 @@ namespace LCGoLInjector
         public static IEnumerable<Process> GetProcesses()
         {
             return Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle));
-        }
-
-        /// <summary>
-        /// Gets the Application Name for a Process.
-        /// </summary>
-        /// <param name="process">The process to find the Application Name for.</param>
-        /// <returns>The Application Name of the Process.</returns>
-        // TODO: Change to extension method
-        public static string GetApplicationName(Process process)
-        {
-            string applicationName = process?.MainWindowTitle?.Split('-').Last().Trim();
-
-            if (string.IsNullOrWhiteSpace(applicationName))
-            {
-                applicationName = process?.MainWindowTitle?.Trim();
-
-                if (string.IsNullOrWhiteSpace(applicationName))
-                {
-                    applicationName = process?.ProcessName?.Trim();
-                }
-            }
-
-            return applicationName;
         }
     }
 }

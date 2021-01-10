@@ -7,6 +7,9 @@ using SharpDX.Direct3D9;
 using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Overlay;
 using LCGoLOverlayProcess.Helpers;
+using static EasyHook.RemoteHooking;
+using System.Diagnostics;
+using WinOSExtensions.Extensions;
 
 namespace LCGoLOverlayProcess
 {
@@ -22,8 +25,12 @@ namespace LCGoLOverlayProcess
         /// </summary>
         private readonly Queue<string> _messageQueue = new Queue<string>();
 
+        private readonly Process _injectorProcess;
+        private readonly LiveSplitHelper _liveSplitHelper;
+
         // LCGoL Items:
-        private readonly GameInfo _gameInfo;
+        private readonly Process _lcgolProcess;
+        private readonly GameInfo _lcgolInfo;
         private readonly IOverlay _overlay;
 
         /// <summary>
@@ -34,14 +41,20 @@ namespace LCGoLOverlayProcess
         /// <param name="context">Some context information about the environment in which this method is invoked.</param>
         /// <param name="channelName">The IPC Channel Name for communication.</param>
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
-        public InjectionEntryPoint(RemoteHooking.IContext context, string channelName, int lcGoLProcessId)
+        public InjectionEntryPoint(IContext context, string channelName, int lcGoLProcessId)
         {
-            _server = RemoteHooking.IpcConnectClient<ServerInterface>(channelName);
+            _server = IpcConnectClient<ServerInterface>(channelName);
 
-            _gameInfo = new GameInfo(lcGoLProcessId);
+            _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
+            _lcgolInfo = new GameInfo(_lcgolProcess);
             _overlay = new LCGoLOverlay();
 
             _server.Ping();
+            _injectorProcess = Process.GetProcessById(context.HostPID);
+            // TODO: Once integrated into livesplit, the livesplit process shsould be the _injectorProcess
+            var livesplitprocess = _injectorProcess;
+            //livesplitprocess = Process.GetProcessesByName("LiveSplit").FirstOrDefault();
+            _liveSplitHelper = new LiveSplitHelper(livesplitprocess, channelName, _server);
         }
 
         /// <summary>
@@ -53,10 +66,12 @@ namespace LCGoLOverlayProcess
         /// <param name="context">Some context information about the environment in which this method is invoked.</param>
         /// <param name="channelName">The IPC Channel Name for communication.</param>
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
-        public void Run(RemoteHooking.IContext context, string channelName, int lcGoLProcessId)
+#pragma warning disable IDE0060 // Remove unused parameter
+        public void Run(IContext context, string channelName, int lcGoLProcessId)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             // Report Installed
-            _server.IsInstalled(RemoteHooking.GetCurrentProcessId());
+            _server.IsInstalled(GetCurrentProcessId());
 
             // Get d3d9 device addresses
             var d3d9FunctionAddresses = GetD3D9VTableAddresses();
@@ -73,6 +88,9 @@ namespace LCGoLOverlayProcess
 
             // Report Hooks Installed
             _server.ReportMessage("EndScene Hook Installed");
+
+            _server.ReportMessage($"Context's Process: {_injectorProcess.Id}:{_injectorProcess.GetApplicationName()}");
+            _server.ReportMessage($"LCGOL Process:     {_lcgolProcess.Id}:{_lcgolProcess.GetApplicationName()}");
 
             // Main Thread Loop
             PerformMainThreadLoop();
@@ -96,9 +114,9 @@ namespace LCGoLOverlayProcess
 
             try
             {
-                _gameInfo.Update();
+                _lcgolInfo.Update();
 
-                _overlay.Render(_gameInfo, dev);
+                _overlay.Render(_lcgolInfo, dev, _liveSplitHelper);
             }
             catch (Exception e)
             {

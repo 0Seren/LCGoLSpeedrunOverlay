@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace LCGoLOverlayProcess.Helpers
+namespace WinOSExtensions.DLLWrappers
 {
-    public static class Kernel32dll
+    public static class Kernel32DLL
     {
-        // TODO: I think GetModuleHandleA can be removed. Maybe all of Kernel32dll...
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandleA(string lpModuleName);
     }

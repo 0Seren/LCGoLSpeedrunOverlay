@@ -60,6 +60,10 @@
       <Project>{5ca6296f-18f3-4446-b413-336c7d3108ef}</Project>
       <Name>LCGoLSpeedrunOverlay</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
+      <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
+      <Name>WinOSExtensions</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

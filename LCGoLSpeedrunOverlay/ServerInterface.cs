@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LCGoLOverlayProcess
 {
@@ -11,7 +7,7 @@ namespace LCGoLOverlayProcess
         //TODO: This really only becomes a concern once we look at LiveSplit integration. Figure out if the IPC server needs to work both ways. Or what messages need to be sent.
         public void IsInstalled(int clientPID)
         {
-            Console.WriteLine("FileMonitor has injected FileMonitorHook into process {0}.\r\n", clientPID);
+            Console.WriteLine("LCGoLSpeedrunOverlay has injected FileMonitorHook into process {0}.\r\n", clientPID);
         }
 
         /// <summary>

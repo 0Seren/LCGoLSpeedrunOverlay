@@ -13,12 +13,13 @@ using WinOSExtensions.Extensions;
 
 namespace LCGoLOverlayProcess
 {
+    // ReSharper disable once UnusedType.Global
     public class InjectionEntryPoint : IEntryPoint
     {
         /// <summary>
         /// Used to send messages to the injector.
         /// </summary>
-        private readonly ServerInterface _server = null;
+        private readonly ServerInterface _server;
 
         /// <summary>
         /// Message Queue to send to the injector.
@@ -51,11 +52,15 @@ namespace LCGoLOverlayProcess
 
             _server.Ping();
             _injectorProcess = Process.GetProcessById(context.HostPID);
-            // TODO: Once integrated into livesplit, the livesplit process shsould be the _injectorProcess
+            // TODO: Once integrated into livesplit, the livesplit process should be the _injectorProcess
             var livesplitprocess = _injectorProcess;
             //livesplitprocess = Process.GetProcessesByName("LiveSplit").FirstOrDefault();
             _liveSplitHelper = new LiveSplitHelper(livesplitprocess, channelName, _server);
         }
+
+#pragma warning disable IDE0060 // Remove unused parameter
+// ReSharper disable once UnusedMember.Global
+// ReSharper disable UnusedParameter.Global
 
         /// <summary>
         /// Run immediately after injection.
@@ -66,9 +71,7 @@ namespace LCGoLOverlayProcess
         /// <param name="context">Some context information about the environment in which this method is invoked.</param>
         /// <param name="channelName">The IPC Channel Name for communication.</param>
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
-#pragma warning disable IDE0060 // Remove unused parameter
         public void Run(IContext context, string channelName, int lcGoLProcessId)
-#pragma warning restore IDE0060 // Remove unused parameter
         {
             // Report Installed
             _server.IsInstalled(GetCurrentProcessId());
@@ -79,7 +82,7 @@ namespace LCGoLOverlayProcess
             // Install Hook(s) to EndScene.
             var endSceneHook = LocalHook.Create(
                                             d3d9FunctionAddresses[(int)Direct3DDevice9FunctionOrdinals.EndScene],   // EndScene Function Address
-                                            new EndSceneDelegate(EndSceneHook),                                     // Our delegate/function to hook
+                                            new EndSceneDelegate(EndSceneHook),                             // Our delegate/function to hook
                                             this
                                         );
 
@@ -100,6 +103,9 @@ namespace LCGoLOverlayProcess
             LocalHook.Release();
         }
 
+// ReSharper restore UnusedParameter.Global
+#pragma warning restore IDE0060 // Remove unused parameter
+
         /// <summary>
         /// This method is what is hooked onto the D3D9 EndScene Function.
         /// 
@@ -108,9 +114,9 @@ namespace LCGoLOverlayProcess
         /// </summary>
         /// <param name="device">A pointer to the D3D9 Device of the base executabe.</param>
         /// <returns>An OK Code.</returns>
-        int EndSceneHook(IntPtr device)
+        private int EndSceneHook(IntPtr device)
         {
-            Device dev = (Device)device;
+            var dev = (Device)device;
 
             try
             {
@@ -139,7 +145,7 @@ namespace LCGoLOverlayProcess
                     // Monitor for messages to send every 1/2 second
                     System.Threading.Thread.Sleep(500);
 
-                    string[] queued = null;
+                    string[] queued;
 
                     lock (_messageQueue)
                     {
@@ -147,7 +153,7 @@ namespace LCGoLOverlayProcess
                         _messageQueue.Clear();
                     }
 
-                    if (queued != null && queued.Length > 0)
+                    if (queued.Length > 0)
                     {
                         _server.ReportMessages(queued);
                     }
@@ -167,15 +173,15 @@ namespace LCGoLOverlayProcess
         /// Populates a fake D3D9 device to get VTableAddresses.
         /// </summary>
         /// <returns>A list of the VTableAddresses for D3D9.</returns>
-        private IntPtr[] GetD3D9VTableAddresses()
+        private static IntPtr[] GetD3D9VTableAddresses()
         {
-            using (Direct3D d3d = new Direct3D())
+            using (var d3d = new Direct3D())
             {
                 using (var renderform = new System.Windows.Forms.Form())
                 {
-                    using (var _fakeDevice = new Device(d3d, 0, DeviceType.NullReference, IntPtr.Zero, CreateFlags.HardwareVertexProcessing, new PresentParameters() { BackBufferWidth = 1, BackBufferHeight = 1, DeviceWindowHandle = renderform.Handle }))
+                    using (var fakeDevice = new Device(d3d, 0, DeviceType.NullReference, IntPtr.Zero, CreateFlags.HardwareVertexProcessing, new PresentParameters() { BackBufferWidth = 1, BackBufferHeight = 1, DeviceWindowHandle = renderform.Handle }))
                     {
-                        return GetVTblAddresses(_fakeDevice.NativePointer, 119);
+                        return GetVTblAddresses(fakeDevice.NativePointer, 119);
                     }
                 }
             }
@@ -187,16 +193,16 @@ namespace LCGoLOverlayProcess
         /// <param name="pointer">Pointer to the Address of the VTable.</param>
         /// <param name="numberOfMethods">Number of methods to read from the VTable.</param>
         /// <returns>The Addresses in the VTable.</returns>
-        private IntPtr[] GetVTblAddresses(IntPtr pointer, int numberOfMethods)
+        private static IntPtr[] GetVTblAddresses(IntPtr pointer, int numberOfMethods)
         {
-            List<IntPtr> vtblAddresses = new List<IntPtr>();
-            IntPtr vTable = Marshal.ReadIntPtr(pointer);
-            for (int i = 0; i < numberOfMethods; i++)
+            var vtblAddresses = new List<IntPtr>();
+            var vTable = Marshal.ReadIntPtr(pointer);
+            for (var i = 0; i < numberOfMethods; i++)
                 vtblAddresses.Add(Marshal.ReadIntPtr(vTable, i * IntPtr.Size));
             return vtblAddresses.ToArray();
         }
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
-        delegate int EndSceneDelegate(IntPtr device);
+        private delegate int EndSceneDelegate(IntPtr device);
     }
 }

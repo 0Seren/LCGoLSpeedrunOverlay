@@ -46,7 +46,8 @@
   <ItemGroup>
     <Compile Include="DLLWrappers\Kernel32DLL.cs" />
     <Compile Include="DLLWrappers\User32DLL.cs" />
-    <Compile Include="Extenstions\ProcessExtensions.cs" />
+    <Compile Include="Extensions\ProcessExtensions.cs" />
+    <Compile Include="Extensions\TimeSpanExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

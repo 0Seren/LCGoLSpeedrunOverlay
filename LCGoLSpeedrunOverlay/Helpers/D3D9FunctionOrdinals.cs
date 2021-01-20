@@ -1,4 +1,6 @@
-﻿namespace LCGoLOverlayProcess.Helpers
+﻿// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
+namespace LCGoLOverlayProcess.Helpers
 {
     public enum Direct3DDevice9FunctionOrdinals : short
     {

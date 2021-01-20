@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace LCGoLOverlayProcess.Helpers
+namespace WinOSExtensions.Extensions
 {
-    public static class Extentions
+    public static class TimeSpanExtensions
     {
         // TODO: Find a more efficient way of creating the timer string.
         public static string ToTimerString(this TimeSpan span)
         {
             var sb = new StringBuilder();
-            int hours = (int)span.TotalHours;
-            int minutes = (int)span.TotalMinutes;
+            var hours = (int)span.TotalHours;
+            var minutes = (int)span.TotalMinutes;
 
             if (hours > 0)
             {
@@ -33,7 +30,7 @@ namespace LCGoLOverlayProcess.Helpers
             var msstr = span.Milliseconds.ToString();
             if (msstr.Length > 3)
             {
-                msstr.Substring(0, 3);
+                msstr = msstr.Substring(0, 3);
             }
 
             while (msstr.Length < 3)

@@ -50,12 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\GameData.cs" />
     <Compile Include="Game\GameLevel.cs" />
     <Compile Include="Helpers\D3D9FunctionOrdinals.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Game\GameInfo.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="Helpers\LiveSplitHelper.cs" />
+    <Compile Include="Helpers\SpeedRunComHelper.cs" />
     <Compile Include="Overlay\EndScreenOverlay.cs" />
     <Compile Include="Overlay\IOverlay.cs" />
     <Compile Include="Overlay\LCGoLOverlay.cs" />
@@ -75,6 +77,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SpeedrunComSharp\SpeedrunComSharp\SpeedrunComSharp.csproj">
+      <Project>{924aaffe-5b89-49e2-99ad-ec9373cc838d}</Project>
+      <Name>SpeedrunComSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
       <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
       <Name>WinOSExtensions</Name>

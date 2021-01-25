@@ -7,7 +7,7 @@ namespace LCGoLOverlayProcess.Overlay.SharpDxHelper
     {
         private static Font _font;
 
-        // TODO: Fix the Font Class. Instance methods. Pass in fonts. Make a base font. Scaling?
+        // TODO: Fix the Font Class. Instance methods. Pass in fonts. Make a base font. Scaling? Have a resource manager?
         public static void DrawText(Device device, string text, int textHeight, int x, int y, RawColorBGRA textColor)
         {
             if (device != null)
@@ -31,7 +31,6 @@ namespace LCGoLOverlayProcess.Overlay.SharpDxHelper
 
                 _font.DrawText(null, text, x, y, textColor);
             }
-                
         }
     }
 }

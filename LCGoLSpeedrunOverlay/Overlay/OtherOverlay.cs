@@ -1,4 +1,5 @@
-﻿using LCGoLOverlayProcess.Game;
+﻿using System.Collections.Generic;
+using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using LCGoLOverlayProcess.Overlay.SharpDxHelper;
 using SharpDX.Direct3D9;
@@ -7,42 +8,25 @@ using WinOSExtensions.Extensions;
 
 namespace LCGoLOverlayProcess.Overlay
 {
-    class OtherOverlay : IOverlay
+    internal class OtherOverlay : IOverlay
     {
         public void Render(GameInfo game, Device d3d9Device, LiveSplitHelper liveSplitHelper)
         {
-            int y = 0;
+            var y = 0;
 
-            Text.DrawText(d3d9Device, $"{nameof(game.Level)}: {game.Level}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.Level)}: {game.Current.Level}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Area)}: {game.Area}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.AreaCode)}: {game.Current.AreaCode}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.IsOnEndScreen)}: {game.IsOnEndScreen}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.NumberOfPlayers)}: {game.Current.NumberOfPlayers}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.NumberOfPlayers)}: {game.NumberOfPlayers}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.GameState)}: {game.Current.GameState}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.GameState)}: {game.GameState}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.GameTime)}: {game.Current.GameTime.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.GameTime)}: {game.GameTime.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.ValidVsyncSettings)}: {game.Current.ValidVsyncSettings}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.ValidVsyncSettings)}: {game.ValidVsyncSettings}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.HasControl)}: {game.HasControl}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-
-            // TODO: Drawing window to screen is so slow as to not be usable. We should load textures in a seperate threrad similar to how the liveSplitHelper WindowBitmap works?
-            /*using (Texture texture = Texture.FromMemory(d3d9Device, liveSplitHelper.WindowBitmap))
-            {
-                using (Sprite sprite = new Sprite(d3d9Device))
-                {
-                    sprite.Begin();
-                    var pos = new RawVector3(0, 0, 0);
-                    var color = new RawColorBGRA(255, 255, 255, 255);
-
-                    sprite.Draw(texture, color, null, null, pos);
-
-                    sprite.End();
-                }
-            }*/
+            Text.DrawText(d3d9Device, $"{nameof(game.Current.HasControl)}: {game.Current.HasControl}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
         }
     }
 }

@@ -9,24 +9,39 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCGoLSpeedrunOverlay", "LCG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinOSExtensions", "WinOSExtensions\WinOSExtensions.csproj", "{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedrunComSharp", "..\..\SpeedrunComSharp\SpeedrunComSharp\SpeedrunComSharp.csproj", "{924AAFFE-5B89-49E2-99AD-EC9373CC838D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug with API Calls|Any CPU = Debug with API Calls|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Debug with API Calls|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Debug with API Calls|Any CPU.Build.0 = Debug|Any CPU
 		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Debug with API Calls|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Debug with API Calls|Any CPU.Build.0 = Debug|Any CPU
 		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CA6296F-18F3-4446-B413-336C7D3108EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Debug with API Calls|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Debug with API Calls|Any CPU.Build.0 = Debug|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Debug with API Calls|Any CPU.ActiveCfg = Debug with API Calls|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Debug with API Calls|Any CPU.Build.0 = Debug with API Calls|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{924AAFFE-5B89-49E2-99AD-EC9373CC838D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

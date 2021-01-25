@@ -1,10 +1,11 @@
-﻿using LCGoLOverlayProcess.Game;
+﻿using System.Collections.Generic;
+using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
 
 namespace LCGoLOverlayProcess.Overlay
 {
-    public interface IOverlay
+    internal interface IOverlay
     {
         /// <summary>
         /// Draws the overlay to the screen.

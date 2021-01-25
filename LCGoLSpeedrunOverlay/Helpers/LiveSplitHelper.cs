@@ -10,16 +10,16 @@ namespace LCGoLOverlayProcess.Helpers
     {
         private readonly Process _liveSplitProcess;
         private readonly object _windowBitmapLock = new object();
-        private byte[] _windowBitmap;
+        private Bitmap _windowBitmap;
         private readonly ServerInterface _server;
 
-        public byte[] WindowBitmap
+        public Bitmap WindowBitmap
         {
             get
             {
                 lock (_windowBitmapLock)
                 {
-                    return _windowBitmap;
+                    return new Bitmap(_windowBitmap);
                 }
             }
         }
@@ -36,20 +36,19 @@ namespace LCGoLOverlayProcess.Helpers
 
         private void WindowGrabBackgroundTask()
         {
-            var converter = new ImageConverter();
-
             while (!_liveSplitProcess.HasExited)
             {
                 try
                 {
                     if (_liveSplitProcess.GetProcessBitmap(out var bitmap))
                     {
-                        var bytes = (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+                        Bitmap oldBitmap;
                         lock (_windowBitmapLock)
                         {
-                            _windowBitmap = bytes;
+                            oldBitmap = _windowBitmap;
+                            _windowBitmap = bitmap;
                         }
-                        bitmap.Dispose();
+                        oldBitmap?.Dispose();
                     }
                 } catch (Exception e)
                 {

@@ -28,6 +28,7 @@ namespace LCGoLOverlayProcess
 
         private readonly Process _injectorProcess;
         private readonly LiveSplitHelper _liveSplitHelper;
+        private readonly SpeedRunComHelper _speedRunComHelper;
 
         // LCGoL Items:
         private readonly Process _lcgolProcess;
@@ -56,6 +57,7 @@ namespace LCGoLOverlayProcess
             var livesplitprocess = _injectorProcess;
             //livesplitprocess = Process.GetProcessesByName("LiveSplit").FirstOrDefault();
             _liveSplitHelper = new LiveSplitHelper(livesplitprocess, channelName, _server);
+            //_speedRunComHelper = new SpeedRunComHelper(_server);
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -117,10 +119,29 @@ namespace LCGoLOverlayProcess
         private int EndSceneHook(IntPtr device)
         {
             var dev = (Device)device;
+            var changed = false;
 
             try
             {
                 _lcgolInfo.Update();
+
+                if (_lcgolInfo.Current.Level != _lcgolInfo.Previous.Level)
+                {
+                    changed = true;
+                    _server.ReportMessage($"New Level: {_lcgolInfo.Current.Level}");
+                }
+
+                if (_lcgolInfo.Current.GameState != _lcgolInfo.Previous.GameState)
+                {
+                    changed = true;
+                    _server.ReportMessage($"New State: {_lcgolInfo.Current.GameState}");
+                }
+
+                if (changed)
+                {
+                    _server.ReportMessage("End Frame.\n");
+                }
+
 
                 _overlay.Render(_lcgolInfo, dev, _liveSplitHelper);
             }

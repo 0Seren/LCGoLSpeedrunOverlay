@@ -7,5 +7,8 @@ namespace WinOSExtensions.DLLWrappers
     {
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandleA(string lpModuleName);
+
+        [DllImport("Kernel32.dll")]
+        public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
     }
 }

@@ -33,9 +33,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiveSplit.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\LCGoLSpeedrunOverlay\LiveSplit.Core.dll</HintPath>
+    <Reference Include="LiveSplit.Core">
+      <HintPath>..\LiveSplit.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,7 +56,6 @@
     <Compile Include="Game\GameInfo.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="Helpers\LiveSplitHelper.cs" />
-    <Compile Include="Helpers\SpeedRunComHelper.cs" />
     <Compile Include="Overlay\EndScreenOverlay.cs" />
     <Compile Include="Overlay\IOverlay.cs" />
     <Compile Include="Overlay\LCGoLOverlay.cs" />
@@ -77,10 +75,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SpeedrunComSharp\SpeedrunComSharp\SpeedrunComSharp.csproj">
-      <Project>{924aaffe-5b89-49e2-99ad-ec9373cc838d}</Project>
-      <Name>SpeedrunComSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
       <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
       <Name>WinOSExtensions</Name>

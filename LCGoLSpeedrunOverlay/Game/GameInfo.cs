@@ -50,7 +50,7 @@ namespace LCGoLOverlayProcess.Game
 
             // Find Memory Watchers:
             var fields = typeof(GameInfo).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            _memoryWatcherFields = fields.Where(field => field.FieldType == typeof(MemoryWatcher) || field.FieldType.BaseType == typeof(MemoryWatcher)).ToList();
+            _memoryWatcherFields = fields.Where(field => typeof(MemoryWatcher).IsAssignableFrom(field.FieldType) && !field.FieldType.IsInterface && !field.FieldType.IsAbstract).ToList();
         }
 
         public void Update()

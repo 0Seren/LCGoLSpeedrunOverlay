@@ -28,7 +28,6 @@ namespace LCGoLOverlayProcess
 
         private readonly Process _injectorProcess;
         private readonly LiveSplitHelper _liveSplitHelper;
-        private readonly SpeedRunComHelper _speedRunComHelper;
 
         // LCGoL Items:
         private readonly Process _lcgolProcess;

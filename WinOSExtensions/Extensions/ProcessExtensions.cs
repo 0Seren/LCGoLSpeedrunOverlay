@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -31,7 +32,6 @@ namespace WinOSExtensions.Extensions
             }
 
             return applicationName;
-
         }
 
         public static bool GetProcessBitmap(this Process process, out Bitmap bitmap, bool innerWindowOnly = true)
@@ -64,7 +64,6 @@ namespace WinOSExtensions.Extensions
                     return User32Dll.PrintWindow(wHandle, hdc, *(byte*)&innerWindowOnly);
                 }
             }
-
         }
     }
 }

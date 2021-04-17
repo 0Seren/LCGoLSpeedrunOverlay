@@ -1,86 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5CA6296F-18F3-4446-B413-336C7D3108EF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LCGoLOverlayProcess</RootNamespace>
     <AssemblyName>LCGoLOverlayProcess</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyTitle>LCGoLOverlayProcess</AssemblyTitle>
+    <Product>LCGoLOverlayProcess</Product>
+    <Copyright>Copyright ©  2021</Copyright>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
       <HintPath>..\LiveSplit.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\GameInfoSnapShot.cs" />
-    <Compile Include="Game\GameLevel.cs" />
-    <Compile Include="Game\InformationHolder.cs" />
-    <Compile Include="Helpers\D3D9FunctionOrdinals.cs" />
-    <Compile Include="EntryPoint.cs" />
-    <Compile Include="Game\GameInfo.cs" />
-    <Compile Include="Game\GameState.cs" />
-    <Compile Include="Helpers\LiveSplitHelper.cs" />
-    <Compile Include="Overlay\EndScreenOverlay.cs" />
-    <Compile Include="Overlay\IOverlay.cs" />
-    <Compile Include="Overlay\LCGoLOverlay.cs" />
-    <Compile Include="Overlay\LoadingScreenOverlay.cs" />
-    <Compile Include="Overlay\OtherOverlay.cs" />
-    <Compile Include="Overlay\SharpDxHelper\Text.cs" />
-    <Compile Include="Overlay\SharpDxHelper\TextBox.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerInterface.cs" />
+    <PackageReference Include="EasyHook" Version="2.7.7097" />
+    <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EasyHook">
-      <Version>2.7.7097</Version>
-    </PackageReference>
-    <PackageReference Include="SharpDX.Direct3D9">
-      <Version>4.2.0</Version>
-    </PackageReference>
+    <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
-      <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
-      <Name>WinOSExtensions</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

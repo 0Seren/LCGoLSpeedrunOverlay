@@ -1,27 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LCGoLInjector</RootNamespace>
+    <AssemblyName>LCGoLInjector</AssemblyName>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyTitle>LiveSplit.LCGoL</AssemblyTitle>
-    <Product>LiveSplit.LCGoL</Product>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AssemblyTitle>LCGoLInjector</AssemblyTitle>
+    <Product>LCGoLInjector</Product>
     <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiveSplit.Core">
-      <HintPath>..\LiveSplit.Core.dll</HintPath>
-    </Reference>
+    <PackageReference Include="EasyHook" Version="2.7.7097" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="UpdateManager">
-      <HintPath>..\UpdateManager.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LCGoLSpeedrunOverlay\LCGoLSpeedrunOverlay.csproj" />
     <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="EasyHook" Version="2.7.7097" />
   </ItemGroup>
 </Project>

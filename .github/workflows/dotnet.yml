@@ -10,23 +10,31 @@ jobs:
   build:
 
     runs-on: windows-latest
-
+ 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      name: Checkout Code
+     
+    - name: Setup MSBuild Path
+      uses: microsoft/setup-msbuild@v1
+       
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+     
+    - name: Restore NuGet Packages
+      run: nuget restore LCGoLSpeedrunOverlay.sln
+ 
+    - name: Build and Publish
+      run: msbuild LCGoLSpeedrunOverlay.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+ 
+    - name: Upload LiveSplit Component Artifact
+      uses: actions/upload-artifact@v2.2.3
       with:
-        dotnet-version: 5.0.x
-    - name: Clean Solution
-      run: dotnet clean ./LCGoLSpeedrunOverlay.sln --configuration Release && dotnet nuget locals all --clear
-    - name: Ensure nuget.org Source
-      uses: fabriciomurta/ensure-nuget-source@v1
+        name: LiveSplit.LCGoL
+        path: LiveSplit.LCGoL\bin\Release
+        
+    - name: Upload Console App Artifact
+      uses: actions/upload-artifact@v2.2.3
       with:
-        name: 'nuget.org'
-        url: 'https://api.nuget.org/v3/index.json'
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+        name: LCGoLOverlayConsoleInjector
+        path: LCGoLOverlayInjector\bin\Release

@@ -17,6 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: 'latest'
     - name: Clean Solution
       run: dotnet clean ./LCGoLSpeedrunOverlay.sln --configuration Release && dotnet nuget locals all --clear
     - name: Ensure nuget.org Source
@@ -26,6 +29,8 @@ jobs:
         url: 'https://api.nuget.org/v3/index.json'
     - name: Restore Dependencies
       run: dotnet restore
+    - name: Restore NuGets
+      run: nuget restore MyProject.sln
     - name: Build
       run: dotnet build --no-restore
     - name: Test

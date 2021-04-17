@@ -31,6 +31,8 @@ jobs:
       run: dotnet restore
     - name: Restore NuGets
       run: nuget restore LCGoLSpeedrunOverlay.sln
+    - name: NuGet Reinstall
+      run: nuget Update-Package -reinstall
     - name: Build
       run: dotnet build --no-restore
     - name: Test

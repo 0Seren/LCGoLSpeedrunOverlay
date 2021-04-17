@@ -49,8 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\CustomDataWatcher.cs" />
+    <Compile Include="Game\GameInfoSnapShot.cs" />
     <Compile Include="Game\GameLevel.cs" />
+    <Compile Include="Game\InformationHolder.cs" />
     <Compile Include="Helpers\D3D9FunctionOrdinals.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Game\GameInfo.cs" />
@@ -80,5 +81,6 @@
       <Name>WinOSExtensions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

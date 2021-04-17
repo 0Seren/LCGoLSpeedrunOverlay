@@ -14,19 +14,19 @@ namespace LCGoLOverlayProcess.Overlay
         {
             var y = 0;
 
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.Level)}: {game.Current.Level}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.Level.Current)}: {game.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.AreaCode)}: {game.Current.AreaCode}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.AreaCode.Current)}: {game.AreaCode.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.NumberOfPlayers)}: {game.Current.NumberOfPlayers}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.NumberOfPlayers.Current)}: {game.NumberOfPlayers.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.GameState)}: {game.Current.GameState}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.State.Current)}: {game.State.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.GameTime)}: {game.Current.GameTime.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.GameTime.Current)}: {game.GameTime.Current.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.ValidVsyncSettings)}: {game.Current.ValidVsyncSettings}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.ValidVSyncSettings.Current)}: {game.ValidVSyncSettings.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.Current.HasControl)}: {game.Current.HasControl}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            Text.DrawText(d3d9Device, $"{nameof(game.HasControl.Current)}: {game.HasControl.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
         }
     }
 }

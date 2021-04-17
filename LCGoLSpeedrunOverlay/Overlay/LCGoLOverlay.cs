@@ -25,7 +25,7 @@ namespace LCGoLOverlayProcess.Overlay
         public void Render(GameInfo game, Device d3d9Device, LiveSplitHelper liveSplitHelper)
         {
             // TODO: Pass in a scaling factor here? At least figure our how overlay scaling will work.
-            if (_overlayLookup.TryGetValue(game.Current.GameState, out var overlay))
+            if (_overlayLookup.TryGetValue(game.State.Current, out var overlay))
             {
                 overlay.Render(game, d3d9Device, liveSplitHelper);
             } else

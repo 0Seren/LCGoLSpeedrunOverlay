@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -14,34 +13,42 @@ namespace LCGoLOverlayProcess.Game
         private readonly Process _lcgolProcess;
 
         public readonly MemoryWatcher<byte> Level = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0x65C548));
-        public readonly StringWatcher Area = new StringWatcher(new DeepPointer(_lcgolEXEBase, 0xCA8E1C), 1000);
+        public readonly StringWatcher AreaCode = new StringWatcher(new DeepPointer(_lcgolEXEBase, 0xCA8E1C), 1000);
         public readonly MemoryWatcher<byte> SpLoading = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0xA84CAC));
         public readonly MemoryWatcher<byte> MpLoading = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0xCEB5F8));
         public readonly MemoryWatcher<byte> MpLoading2 = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0xCA8D0B));
-        public readonly MemoryWatcher<int> GameTime = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0xCA8EE4));
+        private readonly MemoryWatcher<int> _gameTime = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0xCA8EE4));
         public readonly MemoryWatcher<int> RefreshRate = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0x0884554, 0x228));
         public readonly MemoryWatcher<int> VSyncPresentationInterval = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0x0884554, 0x22C));
         public readonly MemoryWatcher<bool> IsOnEndScreen = new MemoryWatcher<bool>(new DeepPointer(_lcgolEXEBase, 0x7C0DD0));
         public readonly MemoryWatcher<byte> NumberOfPlayers = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0xD7F8EC, 0x10));
         public readonly MemoryWatcher<bool> HasControl = new MemoryWatcher<bool>(new DeepPointer(_lcgolEXEBase, 0x64F3EE));
+        public readonly InformationHolder<bool> ValidVSyncSettings = new InformationHolder<bool>();
+        public readonly InformationHolder<GameState> State = new InformationHolder<GameState>(GameState.Other, GameState.Other);
+        public readonly InformationHolder<TimeSpan> GameTime = new InformationHolder<TimeSpan>();
 
-        private GameState PreviousGameState;
-
-        private void AddMemoryWatchers()
+        public GameInfo(Process lcgolProcess)
         {
+            _lcgolProcess = lcgolProcess;
+
             var fields = typeof(GameInfo).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             var memoryWatchers = fields.Where(field => typeof(MemoryWatcher).IsAssignableFrom(field.FieldType) && !field.FieldType.IsInterface && !field.FieldType.IsAbstract).Select(fi => fi.GetValue(this) as MemoryWatcher);
 
             AddRange(memoryWatchers);
         }
 
-        public GameInfo(Process lcgolProcess)
+        public void Update()
         {
-            _lcgolProcess = lcgolProcess;
-            PreviousGameState = GameState.Other;
+            UpdateAll(_lcgolProcess);
 
-            // Find Memory Watchers:
-            AddMemoryWatchers();
+            State.Update(CurrentGameState());
+            ValidVSyncSettings.Update(CurrentValidVSyncSettings());
+            GameTime.Update(TimeSpan.FromMilliseconds(_gameTime.Current));
+        }
+
+        public GameInfoSnapShot GetGameInfoSnapShot()
+        {
+            return new GameInfoSnapShot(this);
         }
 
         // TODO: Find all the game states
@@ -51,7 +58,7 @@ namespace LCGoLOverlayProcess.Game
             {
                 return GameState.InEndScreen;
             }
-            if (PreviousGameState == GameState.InLoadScreen)
+            if (State.Old == GameState.InLoadScreen)
             {
                 bool inLoad = !((NumberOfPlayers.Current == 1 && SpLoading.Current != 1 && SpLoading.Old == 1 && !IsOnEndScreen.Current)
                               || (NumberOfPlayers.Current > 1 && MpLoading.Current == 1 && MpLoading.Old == 3));

@@ -124,16 +124,16 @@ namespace LCGoLOverlayProcess
             {
                 _lcgolInfo.Update();
 
-                if (_lcgolInfo.Current.Level != _lcgolInfo.Previous.Level)
+                if (_lcgolInfo.Level.Current != _lcgolInfo.Level.Old)
                 {
                     changed = true;
-                    _server.ReportMessage($"New Level: {_lcgolInfo.Current.Level}");
+                    _server.ReportMessage($"New Level: {_lcgolInfo.Level.Current}");
                 }
 
-                if (_lcgolInfo.Current.GameState != _lcgolInfo.Previous.GameState)
+                if (_lcgolInfo.State.Current != _lcgolInfo.State.Old)
                 {
                     changed = true;
-                    _server.ReportMessage($"New State: {_lcgolInfo.Current.GameState}");
+                    _server.ReportMessage($"New State: {_lcgolInfo.State.Current}");
                 }
 
                 if (changed)

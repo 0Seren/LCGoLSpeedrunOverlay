@@ -5,6 +5,9 @@
     <Product>LiveSplit.LCGoL</Product>
     <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
       <HintPath>..\LiveSplit.Core.dll</HintPath>

@@ -9,6 +9,9 @@
     <Product>LCGoLInjector</Product>
     <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EasyHook" Version="2.7.7097" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.1.22-dev">

@@ -6,6 +6,9 @@
     <Copyright>Copyright ©  2021</Copyright>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ReflectionAnalyzers" Version="0.1.22-dev">
       <PrivateAssets>all</PrivateAssets>

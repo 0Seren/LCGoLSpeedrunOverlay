@@ -19,8 +19,11 @@ jobs:
         dotnet-version: 5.0.x
     - name: Clean Solution
       run: dotnet clean ./LCGoLSpeedrunOverlay.sln --configuration Release && dotnet nuget locals all --clear
-    - name: Add nuget.org Source
-      run: dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --configfile $env:APPDATA\NuGet\NuGet.Config
+    - name: Ensure nuget.org Source
+      uses: fabriciomurta/ensure-nuget-source@v1
+      with:
+        name: 'nuget.org'
+        url: 'https://api.nuget.org/v3/index.json'
     - name: Restore Dependencies
       run: dotnet restore
     - name: Build

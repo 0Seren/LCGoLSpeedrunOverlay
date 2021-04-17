@@ -1,11 +1,7 @@
-﻿using System;
-using LCGoLOverlayProcess.Game;
+﻿using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace LCGoLOverlayProcess.Overlay
 {

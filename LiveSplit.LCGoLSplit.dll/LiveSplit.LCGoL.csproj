@@ -4,14 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5CA6296F-18F3-4446-B413-336C7D3108EF}</ProjectGuid>
+    <ProjectGuid>{5FA122EF-A584-40BD-AD65-AE8EE6252410}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LCGoLOverlayProcess</RootNamespace>
-    <AssemblyName>LCGoLOverlayProcess</AssemblyName>
+    <RootNamespace>LiveSplit.LCGoLSplit.dll</RootNamespace>
+    <AssemblyName>LiveSplit.LCGoLSplit.dll</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
@@ -38,43 +37,25 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UpdateManager">
+      <HintPath>..\UpdateManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\CustomDataWatcher.cs" />
-    <Compile Include="Game\GameLevel.cs" />
-    <Compile Include="Helpers\D3D9FunctionOrdinals.cs" />
-    <Compile Include="EntryPoint.cs" />
-    <Compile Include="Game\GameInfo.cs" />
-    <Compile Include="Game\GameState.cs" />
-    <Compile Include="Helpers\LiveSplitHelper.cs" />
-    <Compile Include="Overlay\EndScreenOverlay.cs" />
-    <Compile Include="Overlay\IOverlay.cs" />
-    <Compile Include="Overlay\LCGoLOverlay.cs" />
-    <Compile Include="Overlay\LoadingScreenOverlay.cs" />
-    <Compile Include="Overlay\OtherOverlay.cs" />
-    <Compile Include="Overlay\SharpDxHelper\Text.cs" />
-    <Compile Include="Overlay\SharpDxHelper\TextBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerInterface.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EasyHook">
-      <Version>2.7.7097</Version>
-    </PackageReference>
-    <PackageReference Include="SharpDX.Direct3D9">
-      <Version>4.2.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\LCGoLSpeedrunOverlay\LCGoLSpeedrunOverlay.csproj">
+      <Project>{5ca6296f-18f3-4446-b413-336c7d3108ef}</Project>
+      <Name>LCGoLSpeedrunOverlay</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
       <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
       <Name>WinOSExtensions</Name>

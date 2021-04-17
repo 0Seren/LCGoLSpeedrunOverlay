@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCGoLOverlayInjector", "LCGoLOverlayInjector\LCGoLOverlayInjector.csproj", "{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCGoLOverlayInjectorMain", "LCGoLOverlayInjector\LCGoLOverlayInjectorMain.csproj", "{7E5978D0-FDC7-4F1E-BFF6-CD2DB19BD426}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCGoLSpeedrunOverlay", "LCGoLSpeedrunOverlay\LCGoLSpeedrunOverlay.csproj", "{5CA6296F-18F3-4446-B413-336C7D3108EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinOSExtensions", "WinOSExtensions\WinOSExtensions.csproj", "{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveSplit.LCGoL", "LiveSplit.LCGoL\LiveSplit.LCGoL.csproj", "{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,12 @@ Global
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AE4C4A7-5A4A-453C-8A4B-468C0899881F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Debug with API Calls|Any CPU.ActiveCfg = Debug|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Debug with API Calls|Any CPU.Build.0 = Debug|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C545CFB1-F44D-4E98-94EE-7FFC5BBB9812}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

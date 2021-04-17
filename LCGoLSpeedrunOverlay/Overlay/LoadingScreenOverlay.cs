@@ -10,7 +10,6 @@ namespace LCGoLOverlayProcess.Overlay
 {
     internal class LoadingScreenOverlay : IOverlay
     {
-        private GameData _prevLevelInfo;
         private Texture _liveSplitTexture;
         private Sprite _liveSplitSprite;
         private Rectangle _liveSplitRectangle;
@@ -19,7 +18,6 @@ namespace LCGoLOverlayProcess.Overlay
 
         public LoadingScreenOverlay()
         {
-            _prevLevelInfo = new GameData();
             _converter = new ImageConverter();
         }
 

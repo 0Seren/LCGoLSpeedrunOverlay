@@ -30,7 +30,7 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore
     - name: Restore NuGets
-      run: nuget restore MyProject.sln
+      run: nuget restore LCGoLSpeedrunOverlay.sln
     - name: Build
       run: dotnet build --no-restore
     - name: Test

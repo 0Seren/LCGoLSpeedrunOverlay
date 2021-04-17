@@ -1,4 +1,4 @@
-name: .NET
+name: LCGoLSpeedrunOverlay
 
 on:
   push:
@@ -14,18 +14,24 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       name: Checkout Code
-     
-    - name: Setup MSBuild Path
-      uses: microsoft/setup-msbuild@v1
-       
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-     
-    - name: Restore NuGet Packages
-      run: nuget restore LCGoLSpeedrunOverlay.sln
- 
-    - name: Build and Publish
-      run: msbuild LCGoLSpeedrunOverlay.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      
+    - name: Clean Solution
+      run: dotnet clean LCGoLSpeedrunOverlay.sln --configuration Release
+      
+    - name: Create nuget.org Source
+      uses: fabriciomurta/ensure-nuget-source@v1
+      
+    - name: Restore Solution
+      run: dotnet restore --force
+      
+    - name: Build Solution
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run Tests
+      run: dotnet test --verbosity normal
  
     - name: Upload LiveSplit Component Artifact
       uses: actions/upload-artifact@v2.2.3

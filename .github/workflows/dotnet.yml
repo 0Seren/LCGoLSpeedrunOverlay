@@ -22,7 +22,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
      
     - name: Restore NuGet Packages
-      run: nuget restore SimpleFrameworkApp.sln
+      run: nuget restore LCGoLSpeedrunOverlay.sln
  
     - name: Build and Publish
       run: msbuild LCGoLSpeedrunOverlay.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile

@@ -19,6 +19,7 @@ namespace LCGoLOverlayProcess.Helpers
             {
                 lock (_windowBitmapLock)
                 {
+                    // We have to return a new Bitmap because _windowBitmap can be disposed at any time.
                     return new Bitmap(_windowBitmap);
                 }
             }
@@ -40,16 +41,17 @@ namespace LCGoLOverlayProcess.Helpers
             {
                 try
                 {
-                    if (_liveSplitProcess.GetProcessBitmap(out var bitmap))
+                    if (!_liveSplitProcess.GetProcessBitmap(out var bitmap)) 
+                        continue;
+
+                    var oldBitmap = _windowBitmap;
+
+                    lock (_windowBitmapLock)
                     {
-                        Bitmap oldBitmap;
-                        lock (_windowBitmapLock)
-                        {
-                            oldBitmap = _windowBitmap;
-                            _windowBitmap = bitmap;
-                        }
-                        oldBitmap?.Dispose();
+                        _windowBitmap = bitmap;
                     }
+
+                    oldBitmap?.Dispose();
                 } catch (Exception e)
                 {
                     // TODO: Make error reporting be a global, static class?

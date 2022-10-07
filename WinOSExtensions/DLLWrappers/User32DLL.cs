@@ -13,5 +13,11 @@ namespace WinOSExtensions.DLLWrappers
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr handle, ref Rectangle rect);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr handle);
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
     }
 }

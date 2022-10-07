@@ -9,7 +9,13 @@ using LCGoLOverlayProcess.Overlay;
 using LCGoLOverlayProcess.Helpers;
 using static EasyHook.RemoteHooking;
 using System.Diagnostics;
+using LCGoLOverlayProcess.Server;
 using WinOSExtensions.Extensions;
+using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Channels;
+using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LCGoLOverlayProcess
 {
@@ -17,14 +23,13 @@ namespace LCGoLOverlayProcess
     public class InjectionEntryPoint : IEntryPoint
     {
         /// <summary>
-        /// Used to send messages to the injector.
+        /// Bi-Directional communication with the injector.
         /// </summary>
-        private readonly ServerInterface _server;
+        private readonly OverlayInterface _overlayInterface;
+        private readonly ClientOverlayInterfaceEventProxy _clientEventProxy = new ClientOverlayInterfaceEventProxy();
+        private readonly IpcServerChannel _clientServerChannel = null;
 
-        /// <summary>
-        /// Message Queue to send to the injector.
-        /// </summary>
-        private readonly Queue<string> _messageQueue = new Queue<string>();
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private readonly Process _injectorProcess;
         private readonly LiveSplitHelper _liveSplitHelper;
@@ -44,24 +49,43 @@ namespace LCGoLOverlayProcess
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
         public InjectionEntryPoint(IContext context, string channelName, int lcGoLProcessId)
         {
-            _server = IpcConnectClient<ServerInterface>(channelName);
+            // Get reference to IPC to host application
+            // Note: any methods called or events triggered against _interface will execute in the host process.
+            _overlayInterface = IpcConnectClient<OverlayInterface>(channelName);
 
+            // Ping immediately to see if injection was successful
+            _overlayInterface.Ping();
+
+            // Attempt to create a IpcServerChannel so that any event handlers on the client will function correctly (bi-directional ipc)
+            IDictionary properties = new Hashtable
+            {
+                ["name"] = channelName,
+                ["portName"] = channelName + Guid.NewGuid().ToString("N")
+            };
+
+            var binaryProv = new BinaryServerFormatterSinkProvider
+            {
+                TypeFilterLevel = System.Runtime.Serialization.Formatters.TypeFilterLevel.Full
+            };
+
+            _clientServerChannel = new IpcServerChannel(properties, binaryProv);
+            ChannelServices.RegisterChannel(_clientServerChannel, false);
+
+            // Setup "global" variables
             _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
             _lcgolInfo = new GameInfo(_lcgolProcess);
             _overlay = new LCGoLOverlay();
 
-            _server.Ping();
             _injectorProcess = Process.GetProcessById(context.HostPID);
+
             // TODO: Once integrated into livesplit, the livesplit process should be the _injectorProcess
             var livesplitprocess = _injectorProcess;
             //livesplitprocess = Process.GetProcessesByName("LiveSplit").FirstOrDefault();
-            _liveSplitHelper = new LiveSplitHelper(livesplitprocess, channelName, _server);
+            _liveSplitHelper = new LiveSplitHelper(livesplitprocess, _overlayInterface);
             //_speedRunComHelper = new SpeedRunComHelper(_server);
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-// ReSharper disable once UnusedMember.Global
-// ReSharper disable UnusedParameter.Global
 
         /// <summary>
         /// Run immediately after injection.
@@ -74,37 +98,81 @@ namespace LCGoLOverlayProcess
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
         public void Run(IContext context, string channelName, int lcGoLProcessId)
         {
+            // When not using GAC there can be issues with remoting assemblies resolving correctly
+            // this is a workaround that ensures that the current assembly is correctly associated
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.AssemblyResolve += (sender, args) =>
+            {
+                return GetType().Assembly.FullName == args.Name ? GetType().Assembly : null;
+            };
+
             // Report Installed
-            _server.IsInstalled(GetCurrentProcessId());
+            _overlayInterface.IsInstalled(GetCurrentProcessId());
 
-            // Get d3d9 device addresses
-            var d3d9FunctionAddresses = GetD3D9VTableAddresses();
+            try
+            {
+                // Get d3d9 device addresses
+                var d3d9FunctionAddresses = GetD3D9VTableAddresses();
 
-            // Install Hook(s) to EndScene.
-            var endSceneHook = LocalHook.Create(
-                                            d3d9FunctionAddresses[(int)Direct3DDevice9FunctionOrdinals.EndScene],   // EndScene Function Address
-                                            new EndSceneDelegate(EndSceneHook),                             // Our delegate/function to hook
-                                            this
-                                        );
+                // Install Hook(s) to EndScene.
+                var endSceneHook = LocalHook.Create(
+                                                d3d9FunctionAddresses[(int)Direct3DDevice9FunctionOrdinals.EndScene],   // EndScene Function Address
+                                                new EndSceneDelegate(EndSceneHook),                             // Our delegate/function to hook
+                                                this
+                                            );
 
-            // Activate hooks
-            endSceneHook.ThreadACL.SetExclusiveACL(new int[1]);
+                // Activate hooks
+                endSceneHook.ThreadACL.SetExclusiveACL(new int[1]);
 
-            // Report Hooks Installed
-            _server.ReportMessage("EndScene Hook Installed");
+                // Report Hooks Installed
+                _overlayInterface.SendMessage("EndScene Hook Installed");
 
-            _server.ReportMessage($"Context's Process: {_injectorProcess.Id}:{_injectorProcess.GetApplicationName()}");
-            _server.ReportMessage($"LCGOL Process:     {_lcgolProcess.Id}:{_lcgolProcess.GetApplicationName()}");
+                _overlayInterface.SendMessage($"Context's Process: {_injectorProcess.Id}:{_injectorProcess.GetApplicationName()}");
+                _overlayInterface.SendMessage($"LCGOL Process:     {_lcgolProcess.Id}:{_lcgolProcess.GetApplicationName()}");
 
-            // Main Thread Loop
-            PerformMainThreadLoop();
 
-            // Stop Injection if main thread ends
-            endSceneHook.Dispose();
-            LocalHook.Release();
+                _overlayInterface.Disconnected += _clientEventProxy.DisconnectedProxyHandler;
+
+                // Important Note:
+                // accessing the _interface from within a _clientEventProxy event handler must always 
+                // be done on a different thread otherwise it will cause a deadlock
+                _clientEventProxy.Disconnected += () =>
+                {
+                    // We can now signal the exit of the Run method
+                    _cancellationTokenSource.Cancel();
+                };
+
+                StartCheckHostIsAliveThread();
+
+                _cancellationTokenSource.Token.WaitHandle.WaitOne();
+
+                StopCheckHostIsAliveThread();
+
+                // Stop Injection if main thread ends
+                endSceneHook.Dispose();
+                LocalHook.Release();
+            } catch (Exception e)
+            {
+                _overlayInterface.ReportException(e);
+            } finally
+            {
+                try
+                {
+                    _overlayInterface.SendMessage($"Disconnecting from process {GetCurrentProcessId()}");
+                }
+                catch
+                {
+                }
+
+                // Remove the client server channel (that allows client event handlers)
+                ChannelServices.UnregisterChannel(_clientServerChannel);
+                _cancellationTokenSource?.Dispose();
+
+                // Always sleep long enough for any remaining messages to complete sending
+                Thread.Sleep(100);
+            }
         }
-
-// ReSharper restore UnusedParameter.Global
+        
 #pragma warning restore IDE0060 // Remove unused parameter
 
         /// <summary>
@@ -118,75 +186,20 @@ namespace LCGoLOverlayProcess
         private int EndSceneHook(IntPtr device)
         {
             var dev = (Device)device;
-            var changed = false;
 
             try
             {
                 _lcgolInfo.Update();
 
-                if (_lcgolInfo.Level.Current != _lcgolInfo.Level.Old)
-                {
-                    changed = true;
-                    _server.ReportMessage($"New Level: {_lcgolInfo.Level.Current}");
-                }
-
-                if (_lcgolInfo.State.Current != _lcgolInfo.State.Old)
-                {
-                    changed = true;
-                    _server.ReportMessage($"New State: {_lcgolInfo.State.Current}");
-                }
-
-                if (changed)
-                {
-                    _server.ReportMessage("End Frame.\n");
-                }
-
-
                 _overlay.Render(_lcgolInfo, dev, _liveSplitHelper);
             }
             catch (Exception e)
             {
-                _server.ReportException(e);
+                _overlayInterface.ReportException(e);
             }
 
             dev.EndScene();
             return Result.Ok.Code;
-        }
-
-        /// <summary>
-        /// This simply handles messages that need to be sent back to the injector.
-        /// </summary>
-        private void PerformMainThreadLoop()
-        {
-            try
-            {
-                while (true)
-                {
-                    // Monitor for messages to send every 1/2 second
-                    System.Threading.Thread.Sleep(500);
-
-                    string[] queued;
-
-                    lock (_messageQueue)
-                    {
-                        queued = _messageQueue.ToArray();
-                        _messageQueue.Clear();
-                    }
-
-                    if (queued.Length > 0)
-                    {
-                        _server.ReportMessages(queued);
-                    }
-                    else
-                    {
-                        _server.Ping();
-                    }
-                }
-            }
-            catch
-            {
-                // Can no longer contact the injector, so stop the injection.
-            }
         }
 
         /// <summary>
@@ -224,5 +237,40 @@ namespace LCGoLOverlayProcess
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate int EndSceneDelegate(IntPtr device);
+
+        // _checkAlive needs to be a field to stay alive
+        private Task _checkAlive;
+        private long _stopCheckAlive = 0;
+        /// <summary>
+        /// This simply handles messages that need to be sent back to the injector.
+        /// </summary>
+        private void StartCheckHostIsAliveThread()
+        {
+            _checkAlive = new Task(() =>
+            {
+                try
+                {
+                    while (Interlocked.Read(ref _stopCheckAlive) == 0)
+                    {
+                        // Monitor for messages to send every 1/2 second
+                        Thread.Sleep(500);
+
+                        _overlayInterface.Ping();
+                    }
+                }
+                catch
+                {
+                    // Can no longer contact the injector, so stop the injection.
+                    _cancellationTokenSource.Cancel();
+                }
+            });
+
+            _checkAlive.Start();
+        }
+
+        private void StopCheckHostIsAliveThread()
+        {
+            Interlocked.Increment(ref _stopCheckAlive);
+        }
     }
 }

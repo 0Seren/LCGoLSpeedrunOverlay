@@ -4,6 +4,7 @@
     <AssemblyTitle>LiveSplit.LCGoL</AssemblyTitle>
     <Product>LiveSplit.LCGoL</Product>
     <Copyright>Copyright ©  2021</Copyright>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -16,6 +17,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="UpdateManager">
       <HintPath>..\UpdateManager.dll</HintPath>
     </Reference>

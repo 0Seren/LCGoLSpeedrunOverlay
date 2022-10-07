@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,7 @@ namespace LCGoLOverlayProcess.Game
     {
         private const string _lcgolEXEBase = "lcgol.exe";
         private readonly Process _lcgolProcess;
+        private readonly IEnumerable<IInformationHolder> _informationHolders;
 
         public readonly MemoryWatcher<byte> Level = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0x65C548));
         public readonly StringWatcher AreaCode = new StringWatcher(new DeepPointer(_lcgolEXEBase, 0xCA8E1C), 1000);
@@ -23,9 +25,10 @@ namespace LCGoLOverlayProcess.Game
         public readonly MemoryWatcher<bool> IsOnEndScreen = new MemoryWatcher<bool>(new DeepPointer(_lcgolEXEBase, 0x7C0DD0));
         public readonly MemoryWatcher<byte> NumberOfPlayers = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0xD7F8EC, 0x10));
         public readonly MemoryWatcher<bool> HasControl = new MemoryWatcher<bool>(new DeepPointer(_lcgolEXEBase, 0x64F3EE));
-        public readonly InformationHolder<bool> ValidVSyncSettings = new InformationHolder<bool>();
-        public readonly InformationHolder<GameState> State = new InformationHolder<GameState>(GameState.Other, GameState.Other);
-        public readonly InformationHolder<TimeSpan> GameTime = new InformationHolder<TimeSpan>();
+        
+        public readonly InformationHolder<bool> ValidVSyncSettings;
+        public readonly InformationHolder<GameState> State;
+        public readonly InformationHolder<TimeSpan> GameTime;
 
         public GameInfo(Process lcgolProcess)
         {
@@ -35,15 +38,23 @@ namespace LCGoLOverlayProcess.Game
             var memoryWatchers = fields.Where(field => typeof(MemoryWatcher).IsAssignableFrom(field.FieldType) && !field.FieldType.IsInterface && !field.FieldType.IsAbstract).Select(fi => fi.GetValue(this) as MemoryWatcher);
 
             AddRange(memoryWatchers);
+
+            ValidVSyncSettings = new InformationHolder<bool>(CurrentValidVSyncSettings);
+            State = new InformationHolder<GameState>(CurrentGameState, GameState.Other, GameState.Other);
+            GameTime = new InformationHolder<TimeSpan>(() => TimeSpan.FromMilliseconds(_gameTime.Current));
+
+            var infoHolders = fields.Where(field => typeof(IInformationHolder).IsAssignableFrom(field.FieldType) && !field.FieldType.IsInterface && !field.FieldType.IsAbstract).Select(fi => fi.GetValue(this) as IInformationHolder);
+            _informationHolders = new List<IInformationHolder>(infoHolders);
         }
 
         public void Update()
         {
             UpdateAll(_lcgolProcess);
 
-            State.Update(CurrentGameState());
-            ValidVSyncSettings.Update(CurrentValidVSyncSettings());
-            GameTime.Update(TimeSpan.FromMilliseconds(_gameTime.Current));
+            foreach (var informationHolder in _informationHolders)
+            {
+               informationHolder.Update(); 
+            }
         }
 
         public GameInfoSnapShot GetGameInfoSnapShot()

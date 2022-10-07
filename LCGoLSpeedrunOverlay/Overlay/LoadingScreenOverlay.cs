@@ -43,7 +43,12 @@ namespace LCGoLOverlayProcess.Overlay
 
         public void Render(GameInfo game, Device d3d9Device, LiveSplitHelper liveSplitHelper)
         {
-            if (game.State.Old != GameState.InEndScreen && game.State.Current == GameState.InEndScreen)
+            if (game.State.Old != GameState.InLoadScreen && string.IsNullOrWhiteSpace(game.AreaCode.Old))
+            {
+                _prevLevelInfo = null;
+            }
+
+            if (game.State.Changed && game.State.Current == GameState.InEndScreen)
             {
                 _prevLevelInfo = game.GetGameInfoSnapShot();
                 GenerateLiveSplitSprite(d3d9Device, liveSplitHelper);
@@ -56,24 +61,26 @@ namespace LCGoLOverlayProcess.Overlay
             }
 
             var y = 0;
+            if (_prevLevelInfo != null)
+            {
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.Level)}: {_prevLevelInfo.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.AreaCode)}: {_prevLevelInfo.AreaCode.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.NumberOfPlayers)}: {_prevLevelInfo.NumberOfPlayers.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.State)}: {_prevLevelInfo.State.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.GameTime)}: {_prevLevelInfo.GameTime.Current.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.ValidVSyncSettings)}: {_prevLevelInfo.ValidVSyncSettings.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.HasControl)}: {_prevLevelInfo.HasControl.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
 
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.Level)}: {_prevLevelInfo.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.AreaCode)}: {_prevLevelInfo.AreaCode.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.NumberOfPlayers)}: {_prevLevelInfo.NumberOfPlayers.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.State)}: {_prevLevelInfo.State.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.GameTime)}: {_prevLevelInfo.GameTime.Current.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.ValidVSyncSettings)}: {_prevLevelInfo.ValidVSyncSettings.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.HasControl)}: {_prevLevelInfo.HasControl.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-
-            y += 36;
-            Text.DrawText(d3d9Device, $"------------------", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
+                y += 36;
+                Text.DrawText(d3d9Device, $"------------------", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                y += 36;
+            }
 
             Text.DrawText(d3d9Device, $"{nameof(game.Level)}: {game.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
             y += 36;

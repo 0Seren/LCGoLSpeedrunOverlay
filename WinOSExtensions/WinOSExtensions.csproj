@@ -5,6 +5,7 @@
     <Product>WinOSExtensions</Product>
     <Copyright>Copyright ©  2021</Copyright>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

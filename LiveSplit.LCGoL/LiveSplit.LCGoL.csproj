@@ -4,7 +4,6 @@
     <AssemblyTitle>LiveSplit.LCGoL</AssemblyTitle>
     <Product>LiveSplit.LCGoL</Product>
     <Copyright>Copyright ©  2021</Copyright>
-    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

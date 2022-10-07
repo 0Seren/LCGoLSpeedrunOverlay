@@ -4,11 +4,15 @@
     <AssemblyTitle>WinOSExtensions</AssemblyTitle>
     <Product>WinOSExtensions</Product>
     <Copyright>Copyright ©  2021</Copyright>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ReflectionAnalyzers" Version="0.1.22-dev">

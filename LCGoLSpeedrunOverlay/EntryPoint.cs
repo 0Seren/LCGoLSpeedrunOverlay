@@ -78,11 +78,7 @@ namespace LCGoLOverlayProcess
 
             _injectorProcess = Process.GetProcessById(context.HostPID);
 
-            // TODO: Once integrated into livesplit, the livesplit process should be the _injectorProcess
-            var livesplitprocess = _injectorProcess;
-            //livesplitprocess = Process.GetProcessesByName("LiveSplit").FirstOrDefault();
-            _liveSplitHelper = new LiveSplitHelper(livesplitprocess, _overlayInterface);
-            //_speedRunComHelper = new SpeedRunComHelper(_server);
+            _liveSplitHelper = new LiveSplitHelper(_injectorProcess, _overlayInterface, _cancellationTokenSource.Token);
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -238,19 +234,16 @@ namespace LCGoLOverlayProcess
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate int EndSceneDelegate(IntPtr device);
 
-        // _checkAlive needs to be a field to stay alive
-        private Task _checkAlive;
-        private long _stopCheckAlive = 0;
         /// <summary>
         /// This simply handles messages that need to be sent back to the injector.
         /// </summary>
         private void StartCheckHostIsAliveThread()
         {
-            _checkAlive = new Task(() =>
+            var checkAlive = new Task(() =>
             {
                 try
                 {
-                    while (Interlocked.Read(ref _stopCheckAlive) == 0)
+                    while (!_cancellationTokenSource.Token.IsCancellationRequested)
                     {
                         // Monitor for messages to send every 1/2 second
                         Thread.Sleep(500);
@@ -265,12 +258,12 @@ namespace LCGoLOverlayProcess
                 }
             });
 
-            _checkAlive.Start();
+            checkAlive.Start();
         }
 
         private void StopCheckHostIsAliveThread()
         {
-            Interlocked.Increment(ref _stopCheckAlive);
+            _cancellationTokenSource.Cancel();
         }
     }
 }

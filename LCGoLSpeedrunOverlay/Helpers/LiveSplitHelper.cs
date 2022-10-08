@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using LCGoLOverlayProcess.Server;
 using WinOSExtensions.Extensions;
@@ -13,6 +14,7 @@ namespace LCGoLOverlayProcess.Helpers
         private readonly object _windowBitmapLock = new object();
         private Bitmap _windowBitmap;
         private readonly OverlayInterface _overlayInterface;
+        private readonly CancellationToken _cancellationToken;
 
         public Bitmap WindowBitmap
         {
@@ -27,18 +29,19 @@ namespace LCGoLOverlayProcess.Helpers
         }
 
         // TODO: Create a channel for sending messages back and forth between this and LiveSplit
-        public LiveSplitHelper(Process liveSplitProcess, OverlayInterface overlayInterface)
+        public LiveSplitHelper(Process liveSplitProcess, OverlayInterface overlayInterface, CancellationToken cancellationToken)
         {
             _liveSplitProcess = liveSplitProcess;
             _windowBitmap = null;
             _overlayInterface = overlayInterface;
+            _cancellationToken = cancellationToken;
 
             Task.Run(WindowGrabBackgroundTask);
         }
 
         private void WindowGrabBackgroundTask()
         {
-            while (!_liveSplitProcess.HasExited)
+            while (!_cancellationToken.IsCancellationRequested && !_liveSplitProcess.HasExited)
             {
                 try
                 {

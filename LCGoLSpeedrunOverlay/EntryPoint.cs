@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using SharpDX;
 using SharpDX.Direct3D9;
 using LCGoLOverlayProcess.Game;
-using LCGoLOverlayProcess.Overlay;
+using LCGoLOverlayProcess.Overlays;
 using LCGoLOverlayProcess.Helpers;
 using static EasyHook.RemoteHooking;
 using System.Diagnostics;
@@ -16,7 +16,6 @@ using System.Runtime.Remoting.Channels;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
-using LCGoLOverlayProcess.Overlay.SharpDxHelper;
 
 namespace LCGoLOverlayProcess
 {
@@ -39,7 +38,6 @@ namespace LCGoLOverlayProcess
         private readonly Process _lcgolProcess;
         private readonly GameInfo _lcgolInfo;
         private readonly IOverlay _overlay;
-        private readonly SharpDxResourceManager _sharpDxResourceManager;
 
         /// <summary>
         /// The steps run upon creation, but before injection.
@@ -75,13 +73,11 @@ namespace LCGoLOverlayProcess
 
             // Setup "global" variables
             _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
-            _lcgolInfo = new GameInfo(_lcgolProcess);
-            _sharpDxResourceManager = new SharpDxResourceManager();
-            _overlay = new LCGoLOverlay(_sharpDxResourceManager);
-
             _injectorProcess = Process.GetProcessById(context.HostPID);
-
+            _lcgolInfo = new GameInfo(_lcgolProcess);
             _liveSplitHelper = new LiveSplitHelper(_injectorProcess, _overlayInterface, _cancellationTokenSource.Token);
+
+            _overlay = new LCGoLOverlay(_liveSplitHelper);
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -157,6 +153,7 @@ namespace LCGoLOverlayProcess
                 // Stop Injection if main thread ends
                 endSceneHook.Dispose();
                 resetHook.Dispose();
+                SharpDxResourceManager.Reset();
                 LocalHook.Release();
             } catch (Exception e)
             {
@@ -170,6 +167,7 @@ namespace LCGoLOverlayProcess
                 catch
                 {
                 }
+                SharpDxResourceManager.Reset();
 
                 // Remove the client server channel (that allows client event handlers)
                 ChannelServices.UnregisterChannel(_clientServerChannel);
@@ -198,7 +196,7 @@ namespace LCGoLOverlayProcess
             {
                 _lcgolInfo.Update();
 
-                _overlay.Render(_lcgolInfo, dev, _liveSplitHelper);
+                _overlay.Render(_lcgolInfo, dev);
             }
             catch (Exception e)
             {
@@ -216,7 +214,7 @@ namespace LCGoLOverlayProcess
             try
             {
                 _overlayInterface.SendMessage("Calling Reset Hook...");
-                _sharpDxResourceManager.Cleanup();
+                SharpDxResourceManager.Reset();
             }
             catch (Exception e)
             {

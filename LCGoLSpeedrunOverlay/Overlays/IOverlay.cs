@@ -1,8 +1,7 @@
 ﻿using LCGoLOverlayProcess.Game;
-using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
 
-namespace LCGoLOverlayProcess.Overlay
+namespace LCGoLOverlayProcess.Overlays
 {
     internal interface IOverlay
     {
@@ -11,6 +10,6 @@ namespace LCGoLOverlayProcess.Overlay
         /// </summary>
         /// <param name="game">A GameInfo object containing the current state of the game.</param>
         /// <param name="d3d9Device">A d3d9 device to render with.</param>
-        void Render(GameInfo game, Device d3d9Device, LiveSplitHelper liveSplitHelper);
+        void Render(GameInfo game, Device d3d9Device);
     }
 }

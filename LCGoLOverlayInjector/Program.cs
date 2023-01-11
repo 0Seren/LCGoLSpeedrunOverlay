@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using LCGoLOverlayProcess.Server;
 using WinOSExtensions.Extensions;
-using System.Runtime.Remoting.Channels.Ipc;
 using WinOSExtensions.DLLWrappers;
 using System.Threading;
 

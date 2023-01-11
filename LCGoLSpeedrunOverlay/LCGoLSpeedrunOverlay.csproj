@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RootNamespace>LCGoLOverlayProcess</RootNamespace>
     <AssemblyName>LCGoLOverlayProcess</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AssemblyTitle>LCGoLOverlayProcess</AssemblyTitle>
     <Product>LCGoLOverlayProcess</Product>
     <Copyright>Copyright ©  2021</Copyright>

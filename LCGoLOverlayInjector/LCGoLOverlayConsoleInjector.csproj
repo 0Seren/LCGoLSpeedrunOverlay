@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>LCGoLInjector</RootNamespace>
     <AssemblyName>LCGoLInjector</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>LCGoLInjector</AssemblyTitle>
     <Product>LCGoLInjector</Product>

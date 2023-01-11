@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AssemblyTitle>WinOSExtensions</AssemblyTitle>
     <Product>WinOSExtensions</Product>
     <Copyright>Copyright ©  2021</Copyright>

@@ -21,25 +21,6 @@ namespace LCGoLInjector
         {
             Process lcGoLProc = WaitForAndGetProcess();
 
-            var (overlayInterface, overlayServer) = InjectOverlay(lcGoLProc);
-
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("<Press any key to stop injection>");
-            Console.ResetColor();
-            Console.ReadKey();
-
-            overlayInterface.Disconnect();
-            SetProcessToForeground(lcGoLProc);
-
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("<Press any key to exit>");
-            Console.ResetColor();
-            Console.ReadKey();
-            Console.WriteLine(overlayServer.ChannelName);
-        }
-
-        private static (OverlayInterface OverlayInterface, IpcServerChannel OverlayServer) InjectOverlay(Process lcGoLProc)
-        {
             string channelName = null;
             var overlayInterface = new OverlayInterface();
             var overlayServer = RemoteHooking.IpcCreateServer(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton, overlayInterface);
@@ -69,7 +50,19 @@ namespace LCGoLInjector
                 }
             }
 
-            return (overlayInterface, overlayServer);
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("<Press any key to stop injection>");
+            Console.ResetColor();
+            Console.ReadKey();
+
+            overlayInterface.Disconnect();
+            SetProcessToForeground(lcGoLProc);
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("<Press any key to exit>");
+            Console.ResetColor();
+            Console.ReadKey();
+            Console.WriteLine(overlayServer.ChannelName);
         }
 
         private static void SetProcessToForeground(Process p)

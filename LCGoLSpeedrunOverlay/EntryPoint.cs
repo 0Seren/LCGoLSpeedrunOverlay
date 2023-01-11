@@ -16,6 +16,7 @@ using System.Runtime.Remoting.Channels;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using LCGoLOverlayProcess.Overlay.SharpDxHelper;
 
 namespace LCGoLOverlayProcess
 {
@@ -38,6 +39,7 @@ namespace LCGoLOverlayProcess
         private readonly Process _lcgolProcess;
         private readonly GameInfo _lcgolInfo;
         private readonly IOverlay _overlay;
+        private readonly SharpDxResourceManager _sharpDxResourceManager;
 
         /// <summary>
         /// The steps run upon creation, but before injection.
@@ -74,7 +76,8 @@ namespace LCGoLOverlayProcess
             // Setup "global" variables
             _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
             _lcgolInfo = new GameInfo(_lcgolProcess);
-            _overlay = new LCGoLOverlay();
+            _sharpDxResourceManager = new SharpDxResourceManager();
+            _overlay = new LCGoLOverlay(_sharpDxResourceManager);
 
             _injectorProcess = Process.GetProcessById(context.HostPID);
 
@@ -117,8 +120,15 @@ namespace LCGoLOverlayProcess
                                                 this
                                             );
 
+                var resetHook = LocalHook.Create(
+                                                d3d9FunctionAddresses[(int)Direct3DDevice9FunctionOrdinals.Reset],   // Reset Function Address
+                                                new ResetDelegate(ResetHook),                             // Our delegate/function to hook
+                                                this
+                                            );
+
                 // Activate hooks
                 endSceneHook.ThreadACL.SetExclusiveACL(new int[1]);
+                resetHook.ThreadACL.SetExclusiveACL(new int[1]);
 
                 // Report Hooks Installed
                 _overlayInterface.SendMessage("EndScene Hook Installed");
@@ -130,7 +140,7 @@ namespace LCGoLOverlayProcess
                 _overlayInterface.Disconnected += _clientEventProxy.DisconnectedProxyHandler;
 
                 // Important Note:
-                // accessing the _interface from within a _clientEventProxy event handler must always 
+                // accessing the _interface from within a _clientEventProxy event handler must always
                 // be done on a different thread otherwise it will cause a deadlock
                 _clientEventProxy.Disconnected += () =>
                 {
@@ -146,6 +156,7 @@ namespace LCGoLOverlayProcess
 
                 // Stop Injection if main thread ends
                 endSceneHook.Dispose();
+                resetHook.Dispose();
                 LocalHook.Release();
             } catch (Exception e)
             {
@@ -198,6 +209,24 @@ namespace LCGoLOverlayProcess
             return Result.Ok.Code;
         }
 
+        private int ResetHook(IntPtr device, ref PresentParameters presentParameters)
+        {
+            var dev = (Device)device;
+
+            try
+            {
+                _overlayInterface.SendMessage("Calling Reset Hook...");
+                _sharpDxResourceManager.Cleanup();
+            }
+            catch (Exception e)
+            {
+                _overlayInterface.ReportException(e);
+            }
+
+            dev.Reset(presentParameters);
+            return Result.Ok.Code;
+        }
+
         /// <summary>
         /// Populates a fake D3D9 device to get VTableAddresses.
         /// </summary>
@@ -233,6 +262,9 @@ namespace LCGoLOverlayProcess
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate int EndSceneDelegate(IntPtr device);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
+        private delegate int ResetDelegate(IntPtr device, ref PresentParameters presentParameters);
 
         /// <summary>
         /// This simply handles messages that need to be sent back to the injector.

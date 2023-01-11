@@ -1,5 +1,6 @@
 ﻿using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
+using LCGoLOverlayProcess.Overlay.SharpDxHelper;
 using SharpDX.Direct3D9;
 using System.Collections.Concurrent;
 
@@ -9,10 +10,10 @@ namespace LCGoLOverlayProcess.Overlay
     {
         private readonly ConcurrentDictionary<GameState, IOverlay> _overlayLookup;
 
-        public LCGoLOverlay()
+        public LCGoLOverlay(SharpDxResourceManager sharpDxResourceManager)
         {
-            var loadingOverlay = new LoadingScreenOverlay();
-            var otherOverlay = new OtherOverlay();
+            var loadingOverlay = new LoadingScreenOverlay(sharpDxResourceManager);
+            var otherOverlay = new OtherOverlay(sharpDxResourceManager);
 
             _overlayLookup = new ConcurrentDictionary<GameState, IOverlay>
             {

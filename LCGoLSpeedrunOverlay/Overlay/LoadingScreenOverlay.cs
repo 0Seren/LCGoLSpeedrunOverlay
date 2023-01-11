@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using LCGoLOverlayProcess.Overlay.SharpDxHelper;
@@ -10,33 +11,30 @@ namespace LCGoLOverlayProcess.Overlay
 {
     internal class LoadingScreenOverlay : IOverlay
     {
-        private Texture _liveSplitTexture;
-        private Sprite _liveSplitSprite;
+        private readonly string _liveSplitSpriteName = nameof(LoadingScreenOverlay) + "|" + nameof(_liveSplitSpriteName) + "|" + Guid.NewGuid().ToString("X");
+        private readonly string _liveSplitTextureName = nameof(LoadingScreenOverlay) + "|" + nameof(_liveSplitTextureName) + "|" + Guid.NewGuid().ToString("X");
+
         private Rectangle _liveSplitRectangle;
         private GameInfoSnapShot _prevLevelInfo;
 
-        private readonly ImageConverter _converter;
+        private readonly SharpDxResourceManager _sharpDxResourceManager;
 
-        public LoadingScreenOverlay()
+        public LoadingScreenOverlay(SharpDxResourceManager sharpDxResourceManager)
         {
-            _converter = new ImageConverter();
+            _sharpDxResourceManager = sharpDxResourceManager;
         }
 
         private void GenerateLiveSplitSprite(Device d3d9Device, LiveSplitHelper liveSplitHelper)
         {
-            _liveSplitTexture?.Dispose();
-            _liveSplitSprite?.Dispose();
-
             var bitmap = liveSplitHelper.WindowBitmap;
 
-            if (bitmap != null)
+            if (!(bitmap is null))
             {
-                var bytes = (byte[])_converter.ConvertTo(bitmap, typeof(byte[]));
-
                 _liveSplitRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                _liveSplitTexture = Texture.FromMemory(d3d9Device, bytes);
-                _liveSplitSprite = new Sprite(d3d9Device);
+                _sharpDxResourceManager.ResetSprite(d3d9Device, _liveSplitSpriteName);
+                _sharpDxResourceManager.SetTexture(d3d9Device, _liveSplitTextureName, bitmap);
+
                 bitmap.Dispose();
             }
         }
@@ -60,55 +58,55 @@ namespace LCGoLOverlayProcess.Overlay
                 GenerateLiveSplitSprite(d3d9Device, liveSplitHelper);
             }
 
-            var y = 0;
+            var white = new RawColorBGRA(255, 255, 255, 255);
+            var lineSpacing = 36;
+
+            var font = _sharpDxResourceManager.GetFont(d3d9Device, 34);
+
+            var x = 0;
+            var y = -lineSpacing;
+
             if (_prevLevelInfo != null)
             {
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.Level)}: {_prevLevelInfo.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.AreaCode)}: {_prevLevelInfo.AreaCode.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.NumberOfPlayers)}: {_prevLevelInfo.NumberOfPlayers.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.State)}: {_prevLevelInfo.State.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.GameTime)}: {_prevLevelInfo.GameTime.Current.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.ValidVSyncSettings)}: {_prevLevelInfo.ValidVSyncSettings.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
-                Text.DrawText(d3d9Device, $"{nameof(_prevLevelInfo.HasControl)}: {_prevLevelInfo.HasControl.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+                font.DrawText(null, $"{nameof(_prevLevelInfo.Level)}: {_prevLevelInfo.Level.Current}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.AreaCode)}: {_prevLevelInfo.AreaCode.Current}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.NumberOfPlayers)}: {_prevLevelInfo.NumberOfPlayers.Current}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.State)}: {_prevLevelInfo.State.Current}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.GameTime)}: {_prevLevelInfo.GameTime.Current.ToTimerString()}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.ValidVSyncSettings)}: {_prevLevelInfo.ValidVSyncSettings.Current}", x, y += lineSpacing, white);
+                font.DrawText(null, $"{nameof(_prevLevelInfo.HasControl)}: {_prevLevelInfo.HasControl.Current}", x, y += lineSpacing, white);
 
-                y += 36;
-                Text.DrawText(d3d9Device, $"------------------", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-                y += 36;
+                font.DrawText(null, $"------------------", x, y += lineSpacing, white);
             }
 
-            Text.DrawText(d3d9Device, $"{nameof(game.Level)}: {game.Level.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.AreaCode)}: {game.AreaCode.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.NumberOfPlayers)}: {game.NumberOfPlayers.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.State)}: {game.State.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.GameTime)}: {game.GameTime.Current.ToTimerString()}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.ValidVSyncSettings)}: {game.ValidVSyncSettings.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
-            y += 36;
-            Text.DrawText(d3d9Device, $"{nameof(game.HasControl)}: {game.HasControl.Current}", 34, 0, y, new RawColorBGRA(255, 255, 255, 255));
+            font.DrawText(null, $"{nameof(game.Level)}: {game.Level.Current}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.AreaCode)}: {game.AreaCode.Current}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.NumberOfPlayers)}: {game.NumberOfPlayers.Current}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.State)}: {game.State.Current}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.GameTime)}: {game.GameTime.Current.ToTimerString()}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.ValidVSyncSettings)}: {game.ValidVSyncSettings.Current}", x, y += lineSpacing, white);
+            font.DrawText(null, $"{nameof(game.HasControl)}: {game.HasControl.Current}", x, y += lineSpacing, white);
 
-            if (_liveSplitSprite != null && _liveSplitTexture != null)
+            var liveSplitSprite = _sharpDxResourceManager.GetSprite(d3d9Device, _liveSplitSpriteName);
+            var liveSplitTexture = _sharpDxResourceManager.GetTexture(_liveSplitTextureName);
+
+            if (liveSplitTexture is null)
             {
-                _liveSplitSprite.Begin();
+                GenerateLiveSplitSprite(d3d9Device, liveSplitHelper);
+            }
+
+            if (liveSplitSprite != null && liveSplitTexture != null)
+            {
+                liveSplitSprite.Begin();
 
                 var w = d3d9Device.Viewport.Width;
                 var h = d3d9Device.Viewport.Height;
 
                 var pos = new RawVector3(w-_liveSplitRectangle.Width, h-_liveSplitRectangle.Height, 0);
-                var color = new RawColorBGRA(255, 255, 255, 255);
 
-                _liveSplitSprite.Draw(_liveSplitTexture, color, null, null, pos);
+                liveSplitSprite.Draw(liveSplitTexture, white, null, null, pos);
 
-                _liveSplitSprite.End();
+                liveSplitSprite.End();
             }
         }
     }

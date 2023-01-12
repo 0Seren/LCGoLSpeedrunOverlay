@@ -10,11 +10,13 @@ namespace LCGoLOverlayProcess.Overlays
     internal class LCGoLOverlay : IOverlay
     {
         private readonly IOverlay _debugOverlay;
+        private readonly IOverlay _vsyncSettingsOverlay;
         private readonly ConcurrentDictionary<GameState, IOverlay> _overlayLookup;
 
         public LCGoLOverlay(LiveSplitHelper liveSplitHelper)
         {
             _debugOverlay = new DebugOverlay();
+            _vsyncSettingsOverlay = new ValidVSyncSettingsOverlay();
 
             var loadingOverlay = new LoadingScreenOverlay(liveSplitHelper);
             _overlayLookup = new ConcurrentDictionary<GameState, IOverlay>
@@ -32,6 +34,7 @@ namespace LCGoLOverlayProcess.Overlays
                 overlay.Render(game, d3d9Device);
             }
 
+            _vsyncSettingsOverlay.Render(game, d3d9Device);
             _debugOverlay.Render(game, d3d9Device);
         }
     }

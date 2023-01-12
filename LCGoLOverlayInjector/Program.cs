@@ -31,6 +31,7 @@ namespace LCGoLInjector
             if (!string.IsNullOrWhiteSpace(thisPath))
             {
                 string injectionLibPath = Path.Combine(thisPath, "LCGoLOverlayProcess.dll");
+                Console.WriteLine($"Looking to inject: {injectionLibPath}");
 
                 try
                 {
@@ -38,7 +39,6 @@ namespace LCGoLInjector
 
                     RemoteHooking.Inject(lcGoLProc.Id, injectionLibPath, injectionLibPath, channelName, lcGoLProc.Id);
                     SetProcessToForeground(lcGoLProc);
-
                 }
                 catch (Exception e)
                 {

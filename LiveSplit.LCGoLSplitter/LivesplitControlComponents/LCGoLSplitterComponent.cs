@@ -16,7 +16,7 @@ using LiveSplit.UI;
 using LiveSplit.UI.Components;
 using WinOSExtensions.Extensions;
 
-namespace LiveSplit.LCGoLSplitter.LivesplitControlComponents
+namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 {
     class LCGoLSplitterComponent : LogicComponent
     {

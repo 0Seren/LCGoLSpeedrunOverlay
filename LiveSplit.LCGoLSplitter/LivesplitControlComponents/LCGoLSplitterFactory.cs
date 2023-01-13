@@ -3,7 +3,7 @@ using LiveSplit.UI.Components;
 using System;
 using System.Reflection;
 
-namespace LiveSplit.LCGoLSplitter.LivesplitControlComponents
+namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 {
     class LCGoLSplitterFactory : IComponentFactory
     {

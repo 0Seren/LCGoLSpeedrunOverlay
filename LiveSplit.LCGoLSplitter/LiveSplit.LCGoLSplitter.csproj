@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9CEAC713-5580-409F-8DDB-172BDC576201}</ProjectGuid>
+    <ProjectGuid>{0AB62B68-4DCC-4ED1-ABF7-0020611A5B28}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LiveSplit.LCGoLSplitter</RootNamespace>
@@ -35,15 +35,12 @@
       <HintPath>..\packages\EasyHook.2.7.7097\lib\net40\EasyHook.dll</HintPath>
     </Reference>
     <Reference Include="LiveSplit.Core">
-      <HintPath>C:\Users\Allen Boss\Documents\LiveSplit\Components\LiveSplit.Core.dll</HintPath>
+      <HintPath>..\LiveSplit.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,17 +49,27 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UpdateManager">
-      <HintPath>C:\Users\Allen Boss\Documents\LiveSplit\Components\UpdateManager.dll</HintPath>
+      <HintPath>..\UpdateManager.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LivesplitControlComponents\LCGoLSplitterComponent.cs" />
-    <Compile Include="LivesplitControlComponents\LCGoLSplitterFactory.cs" />
+    <Compile Include="LiveSplitControlComponents\LCGoLSplitterComponent.cs" />
+    <Compile Include="LiveSplitControlComponents\LCGoLSplitterFactory.cs" />
     <Compile Include="LogForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PersonalBestILDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LCGoLSpeedrunOverlay\LCGoLSpeedrunOverlay.csproj">
+      <Project>{65fc43cb-134e-4f87-9f61-d8e25b6f2fd1}</Project>
+      <Name>LCGoLSpeedrunOverlay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
+      <Project>{46ac8a7e-ef9f-4198-af4f-2dd0be7d7660}</Project>
+      <Name>WinOSExtensions</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="EasyHook32.dll">
@@ -89,16 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LCGoLSpeedrunOverlay\LCGoLSpeedrunOverlay.csproj">
-      <Project>{5CA6296F-18F3-4446-B413-336C7D3108EF}</Project>
-      <Name>LCGoLSpeedrunOverlay</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WinOSExtensions\WinOSExtensions.csproj">
-      <Project>{0ae4c4a7-5a4a-453c-8a4b-468c0899881f}</Project>
-      <Name>WinOSExtensions</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

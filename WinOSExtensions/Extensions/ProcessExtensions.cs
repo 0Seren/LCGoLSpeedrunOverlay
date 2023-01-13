@@ -17,7 +17,7 @@ namespace WinOSExtensions.Extensions
         {
             if (process == null)
                 return null;
-            
+
             string applicationName = process.MainWindowTitle.Split('-').Last().Trim();
 
             if (!string.IsNullOrWhiteSpace(applicationName))
@@ -57,11 +57,9 @@ namespace WinOSExtensions.Extensions
             using (var g = Graphics.FromImage(bitmap))
             {
                 var hdc = g.GetHdc();
-                unsafe
-                {
-                    // 0x1 for nFlags captures only the client area of the window. 0x0 for nFlags captures full window.
-                    return User32Dll.PrintWindow(wHandle, hdc, *(byte*)&innerWindowOnly);
-                }
+
+                // 0x1 for nFlags captures only the client area of the window. 0x0 for nFlags captures full window.
+                return User32Dll.PrintWindow(wHandle, hdc, Convert.ToByte(innerWindowOnly));
             }
         }
     }

@@ -30,7 +30,6 @@ namespace LCGoLOverlayProcess.Overlays.State
             {
                 _liveSplitRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                d3d9Device.ResetSprite(_liveSplitSpriteName);
                 d3d9Device.SetTexture(_liveSplitTextureName, bitmap);
 
                 bitmap.Dispose();
@@ -39,7 +38,7 @@ namespace LCGoLOverlayProcess.Overlays.State
 
         public void Render(GameInfo game, Device d3d9Device)
         {
-            if (game.State.Changed && game.State.Current == GameState.InEndScreen)
+            if (game.State.Changed && (game.State.Current == GameState.InEndScreen || game.State.Current == GameState.InLoadScreen))
             {
                 GenerateLiveSplitSprite(d3d9Device);
             }

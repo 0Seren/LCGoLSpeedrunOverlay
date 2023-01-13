@@ -16,6 +16,7 @@
         StrongholdPassage = 11,
         TheMirrorsWake = 12,
         XolotlsStronghold = 13,
-        Unknown = 101,
+
+        None = 255
     }
 }

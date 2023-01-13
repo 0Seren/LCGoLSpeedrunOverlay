@@ -1,13 +1,13 @@
-﻿using System;
-using System.Reflection;
-using LiveSplit.Model;
+﻿using LiveSplit.Model;
 using LiveSplit.UI.Components;
+using System;
+using System.Reflection;
 
-namespace LiveSplit.LCGoL
+namespace LiveSplit.LCGoLSplitter.LivesplitControlComponents
 {
-	public class GoLSplitFactory : IComponentFactory
+    class LCGoLSplitterFactory : IComponentFactory
     {
-        public string ComponentName => "Lara Croft: GoL";
+        public string ComponentName => "Lara Croft: Guardian of Light - AutoSplitter Injector";
 
         public string Description => "Game Time / Auto-splitting for Lara Croft and the Guardian of Light.";
 
@@ -18,13 +18,13 @@ namespace LiveSplit.LCGoL
         //TODO: Add an appropriate UpdateURL
         public string UpdateURL => "";
 
-        public string XMLURL => UpdateURL + "Components/update.LiveSplit.GoLSplit.xml";
+        public string XMLURL => UpdateURL + "";
 
         public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         public IComponent Create(LiveSplitState state)
         {
-            return new GoLSplitComponent(state);
+            return new LCGoLSplitterComponent(state);
         }
     }
 }

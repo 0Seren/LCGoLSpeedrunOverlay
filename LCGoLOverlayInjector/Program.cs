@@ -8,6 +8,7 @@ using LCGoLOverlayProcess.Server;
 using WinOSExtensions.Extensions;
 using WinOSExtensions.DLLWrappers;
 using System.Threading;
+using LCGoLOverlayProcess.Game;
 
 namespace LCGoLInjector
 {
@@ -20,11 +21,16 @@ namespace LCGoLInjector
         {
             Process lcGoLProc = WaitForAndGetProcess();
 
-            string channelName = null;
             var overlayInterface = new OverlayInterface();
-            var overlayServer = RemoteHooking.IpcCreateServer(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton, overlayInterface);
             overlayInterface.ExceptionOccurred += Event_ExceptionOccured;
             overlayInterface.MessageArrived += Event_MessageArrived;
+            overlayInterface.GameStateChanged += Event_GameStateChanged;
+            overlayInterface.ValidVSyncSettingsChanged += Event_VsyncSettingsChanged;
+            overlayInterface.LevelChanged += Event_LevelChanged;
+            overlayInterface.AreaCodeChanged += Event_AreaCodeChanged;
+
+            string channelName = null;
+            var overlayServer = RemoteHooking.IpcCreateServer(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton, overlayInterface);
 
             string thisPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
@@ -102,6 +108,26 @@ namespace LCGoLInjector
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(e.ToString());
             Console.ResetColor();
+        }
+
+        private static void Event_GameStateChanged(GameState currentGameState)
+        {
+            Console.WriteLine($"Game state changed to {currentGameState}.");
+        }
+
+        private static void Event_VsyncSettingsChanged(bool validVsyncSettings)
+        {
+            Console.WriteLine($"Vsync Settings are now {(validVsyncSettings ? string.Empty : "in")}valid.");
+        }
+
+        private static void Event_LevelChanged(GameLevel level)
+        {
+            Console.WriteLine($"Level has changed to {level}.");
+        }
+
+        private static void Event_AreaCodeChanged(string areaCode)
+        {
+            Console.WriteLine($"AreaCode has changed to {areaCode}.");
         }
     }
 }

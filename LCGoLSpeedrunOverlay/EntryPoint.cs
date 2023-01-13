@@ -74,7 +74,7 @@ namespace LCGoLOverlayProcess
             // Setup "global" variables
             _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
             _injectorProcess = Process.GetProcessById(context.HostPID);
-            _lcgolInfo = new GameInfo(_lcgolProcess);
+            _lcgolInfo = new GameInfo(_lcgolProcess, _overlayInterface);
             _liveSplitHelper = new LiveSplitHelper(_injectorProcess, _overlayInterface, _cancellationTokenSource.Token);
 
             _overlay = new LCGoLOverlay(_liveSplitHelper);
@@ -194,7 +194,7 @@ namespace LCGoLOverlayProcess
 
             try
             {
-                _lcgolInfo.Update();
+                _lcgolInfo.UpdateAndReportChanges();
 
                 _overlay.Render(_lcgolInfo, dev);
             }

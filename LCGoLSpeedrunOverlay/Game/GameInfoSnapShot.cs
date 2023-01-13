@@ -7,7 +7,7 @@ namespace LCGoLOverlayProcess.Game
     {
         public GameInfoSnapShot(GameInfo gameInfo)
         {
-            Level = InformationHolder.FromMemoryWatcher(gameInfo.Level);
+            Level = gameInfo.Level.Clone();
             AreaCode = InformationHolder.FromMemoryWatcher(gameInfo.AreaCode);
             SpLoading = InformationHolder.FromMemoryWatcher(gameInfo.SpLoading);
             MpLoading = InformationHolder.FromMemoryWatcher(gameInfo.MpLoading);
@@ -22,7 +22,7 @@ namespace LCGoLOverlayProcess.Game
             GameTime = gameInfo.GameTime.Clone();
         }
 
-        public readonly InformationHolder<byte> Level;
+        public readonly InformationHolder<GameLevel> Level;
         public readonly InformationHolder<string> AreaCode;
         public readonly InformationHolder<byte> SpLoading;
         public readonly InformationHolder<byte> MpLoading;

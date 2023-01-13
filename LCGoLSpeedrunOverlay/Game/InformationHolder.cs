@@ -24,7 +24,7 @@ namespace LCGoLOverlayProcess.Game
 
         public void Update()
         {
-            if (_getNewValue is null)
+            if (!IsUpdateable)
                 return;
 
             Old = Current;

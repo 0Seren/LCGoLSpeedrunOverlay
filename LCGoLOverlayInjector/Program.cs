@@ -9,6 +9,8 @@ using WinOSExtensions.Extensions;
 using WinOSExtensions.DLLWrappers;
 using System.Threading;
 using LCGoLOverlayProcess.Game;
+using System.Reflection;
+using LCGoLOverlayProcess;
 
 namespace LCGoLInjector
 {
@@ -19,6 +21,8 @@ namespace LCGoLInjector
         /// </summary>
         public static void Main()
         {
+            Console.WriteLine("Looking for Lara Croft and the Guardian of Light process...");
+
             Process lcGoLProc = WaitForAndGetProcess();
 
             var overlayInterface = new OverlayInterface();
@@ -32,27 +36,22 @@ namespace LCGoLInjector
             string channelName = null;
             var overlayServer = RemoteHooking.IpcCreateServer(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton, overlayInterface);
 
-            string thisPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string injectionLibPath = Assembly.GetAssembly(typeof(InjectionEntryPoint)).Location;
+            Console.WriteLine($"Looking to inject: {injectionLibPath}");
 
-            if (!string.IsNullOrWhiteSpace(thisPath))
+            try
             {
-                string injectionLibPath = Path.Combine(thisPath, "LCGoLOverlayProcess.dll");
-                Console.WriteLine($"Looking to inject: {injectionLibPath}");
+                Console.WriteLine("Attempting to inject into process {0}", lcGoLProc.Id);
 
-                try
-                {
-                    Console.WriteLine("Attempting to inject into process {0}", lcGoLProc.Id);
-
-                    RemoteHooking.Inject(lcGoLProc.Id, injectionLibPath, injectionLibPath, channelName, lcGoLProc.Id);
-                    SetProcessToForeground(lcGoLProc);
-                }
-                catch (Exception e)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("There was an error while injecting into target:");
-                    Console.ResetColor();
-                    Console.WriteLine(e.ToString());
-                }
+                RemoteHooking.Inject(lcGoLProc.Id, injectionLibPath, injectionLibPath, channelName, lcGoLProc.Id);
+                SetProcessToForeground(lcGoLProc);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("There was an error while injecting into target:");
+                Console.ResetColor();
+                Console.WriteLine(e.ToString());
             }
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;

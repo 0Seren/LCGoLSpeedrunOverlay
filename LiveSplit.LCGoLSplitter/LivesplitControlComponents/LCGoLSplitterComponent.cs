@@ -6,9 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using EasyHook;
+using LCGoLOverlayProcess;
 using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Server;
 using LiveSplit.Model;
@@ -72,28 +74,27 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             if (_lcgolProcess is null)
                 return;
 
-            Debug.WriteLine($"Found LCGoL Process: {_lcgolProcess.Id}");
-
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Found LCGoL Process: {_lcgolProcess.Id}");
+            Thread.Sleep(150);
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Creating IpcCreateServer...");
             string channelName = null;
             _overlayServer = RemoteHooking.IpcCreateServer(ref channelName, WellKnownObjectMode.Singleton, _overlayInterface);
 
-            string thisPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string injectionLibraryPath1 = Assembly.GetAssembly(typeof(LCGoLSplitterComponent)).Location;
 
-            if (!string.IsNullOrWhiteSpace(thisPath))
+            string injectionLibraryPath2 = Path.Combine(Directory.GetParent(injectionLibraryPath1).FullName, Path.GetFileName(injectionLibraryPath1));
+
+            //string injectionLibraryPath = Assembly.GetAssembly(typeof(InjectionEntryPoint)).Location;
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Looking to inject: {injectionLibraryPath2}");
+
+            try
             {
-                string injectionLibraryPath = Path.Combine(thisPath, "LCGoLOverlayProcess.dll");
-                Debug.WriteLine($"Looking to inject: {injectionLibraryPath}");
-
-                try
-                {
-                    Debug.WriteLine($"Attempting to inject into process {_lcgolProcess.Id}.");
-
-                    RemoteHooking.Inject(_lcgolProcess.Id, injectionLibraryPath, injectionLibraryPath, channelName, _lcgolProcess.Id);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"### There was an error while injecting into target: {e}");
-                }
+                Debug.WriteLine($"LiveSplit.LCGoLSplitter: Attempting to inject into process {_lcgolProcess.Id}.");
+                RemoteHooking.Inject(_lcgolProcess.Id, injectionLibraryPath2, injectionLibraryPath2, channelName, _lcgolProcess.Id);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"### LiveSplit.LCGoLSplitter: There was an error while injecting into target: {e}\n\t{e.Data}");
             }
         }
 
@@ -135,12 +136,12 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 
         private static void Event_MessageArrived(string message)
         {
-            Debug.WriteLine(message);
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: {message}");
         }
 
         private static void Event_ExceptionOccured(Exception e)
         {
-            Debug.WriteLine($"### The target process has reported an error: {e}");
+            Debug.WriteLine($"### LiveSplit.LCGoLSplitter: The target process has reported an error: {e}");
         }
 
         private void Timer_OnStart(object sender, EventArgs e)
@@ -150,7 +151,7 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 
         private void Event_GameStateChanged(GameState currentGameState)
         {
-            Debug.WriteLine($"Game state changed to {currentGameState}.");
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Game state changed to {currentGameState}.");
 
             HandleLoading(currentGameState);
             HandleFinishedLevel(currentGameState);
@@ -202,7 +203,7 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 
         private void Event_VsyncSettingsChanged(bool validVsyncSettings)
         {
-            Debug.WriteLine($"Vsync Settings are now {(validVsyncSettings ? string.Empty : "in")}valid.");
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Vsync Settings are now {(validVsyncSettings ? string.Empty : "in")}valid.");
 
             if (_timer.CurrentState.CurrentPhase == TimerPhase.Running)
             {
@@ -213,14 +214,14 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 
         private void Event_LevelChanged(GameLevel level)
         {
-            Debug.WriteLine($"Level has changed to {level}.");
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: Level has changed to {level}.");
 
             _currentLevel = level;
         }
 
         private void Event_AreaCodeChanged(string areaCode)
         {
-            Debug.WriteLine($"AreaCode has changed to {areaCode}.");
+            Debug.WriteLine($"LiveSplit.LCGoLSplitter: AreaCode has changed to {areaCode}.");
 
             _currentAreaCode = areaCode;
         }

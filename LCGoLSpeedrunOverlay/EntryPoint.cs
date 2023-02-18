@@ -25,6 +25,7 @@ namespace LCGoLOverlayProcess
         /// <summary>
         /// Bi-Directional communication with the injector.
         /// </summary>
+        private const string _debugPrefix = "LCGoLSpeedrunOverlay.InjectionEntryPoint: ";
         private readonly OverlayInterface _overlayInterface;
         private readonly ClientOverlayInterfaceEventProxy _clientEventProxy = new ClientOverlayInterfaceEventProxy();
         private readonly IpcServerChannel _clientServerChannel = null;
@@ -49,11 +50,15 @@ namespace LCGoLOverlayProcess
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
         public InjectionEntryPoint(IContext context, string channelName, int lcGoLProcessId)
         {
+            Debug.WriteLine($"{_debugPrefix} Constructor called.");
+
             // Get reference to IPC to host application
             // Note: any methods called or events triggered against _interface will execute in the host process.
+            Debug.WriteLine($"{_debugPrefix} Creating IpcConnectClient on channel: {channelName}...");
             _overlayInterface = IpcConnectClient<OverlayInterface>(channelName);
 
             // Ping immediately to see if injection was successful
+            Debug.WriteLine($"{_debugPrefix} Pinging injector process...");
             _overlayInterface.Ping();
 
             // Attempt to create a IpcServerChannel so that any event handlers on the client will function correctly (bi-directional ipc)
@@ -68,10 +73,12 @@ namespace LCGoLOverlayProcess
                 TypeFilterLevel = System.Runtime.Serialization.Formatters.TypeFilterLevel.Full
             };
 
+            Debug.WriteLine($"{_debugPrefix} Creating two way IpcServerChannel with name: {properties["name"]} and portName: {properties["portName"]}...");
             _clientServerChannel = new IpcServerChannel(properties, binaryProv);
             ChannelServices.RegisterChannel(_clientServerChannel, false);
 
             // Setup "global" variables
+            Debug.WriteLine($"{_debugPrefix} Building overlay objects...");
             _lcgolProcess = Process.GetProcessById(lcGoLProcessId);
             _injectorProcess = Process.GetProcessById(context.HostPID);
             _lcgolInfo = new GameInfo(_lcgolProcess, _overlayInterface);
@@ -93,12 +100,16 @@ namespace LCGoLOverlayProcess
         /// <param name="lcGoLProcessId">The LCGoL Process Id.</param>
         public void Run(IContext context, string channelName, int lcGoLProcessId)
         {
+            Debug.WriteLine($"{_debugPrefix} Run started.");
             // When not using GAC there can be issues with remoting assemblies resolving correctly
             // this is a workaround that ensures that the current assembly is correctly associated
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += (sender, args) =>
             {
-                return GetType().Assembly.FullName == args.Name ? GetType().Assembly : null;
+                var type = GetType();
+
+                Debug.WriteLine($"{_debugPrefix} This Assembly.FullName: {type.Assembly.FullName}. args.Name: {args.Name}.");
+                return type.Assembly.FullName == args.Name ? type.Assembly : null;
             };
 
             // Report Installed

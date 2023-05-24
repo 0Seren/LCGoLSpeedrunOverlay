@@ -8,51 +8,26 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
  
     steps:
     - uses: actions/checkout@v2
       name: Checkout Code
       
-    - name: Install component on windows 2022
-      run: |
-        Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
-        $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
-        $componentsToAdd = @(
-          "Microsoft.Net.Component.4.6.1.SDK",
-          "Microsoft .NET Framework 4.6.1 Targeting Pack"
-        )
-        [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " +  $_}
-        $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
-        $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
-        if ($process.ExitCode -eq 0)
-        {
-            Write-Host "components have been successfully added"
-        }
-        else
-        {
-           Write-Host "components were not installed"
-           exit 1
-        }
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
       
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
       
-    - name: Clean Solution
-      run: dotnet clean LCGoLSpeedrunOverlay.sln --configuration Release
-      
-    - name: Create nuget.org Source
-      uses: fabriciomurta/ensure-nuget-source@v1
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE
       
     - name: Restore Solution
-      run: dotnet restore --force
+      run: nuget restore LCGoLSpeedrunOverlay.sln --force
       
     - name: Build Solution
-      run: dotnet build --configuration Release --no-restore
-      
-    - name: Run Tests
-      run: dotnet test --verbosity normal
+      run: msbuild.exe LCGoLSpeedrunOverlay.sln /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release"
  
     - name: Upload LiveSplit Component Artifact
       uses: actions/upload-artifact@v2.2.3

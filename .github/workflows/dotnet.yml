@@ -21,7 +21,7 @@ jobs:
       uses: NuGet/setup-nuget@v1
       
     - name: Restore Solution
-      run: nuget restore LCGoLSpeedrunOverlay.sln --force
+      run: nuget restore LCGoLSpeedrunOverlay.sln
       
     - name: Build Solution
       run: msbuild.exe LCGoLSpeedrunOverlay.sln -t:rebuild /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release"

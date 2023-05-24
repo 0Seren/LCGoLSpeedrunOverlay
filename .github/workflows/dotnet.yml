@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-2019
  
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout Code
       
     - name: Setup MSBuild
@@ -27,13 +27,13 @@ jobs:
       run: msbuild.exe LCGoLSpeedrunOverlay.sln -t:rebuild /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release"
  
     - name: Upload LiveSplit Component Artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v3
       with:
         name: LiveSplit.LCGoLSplitter
         path: LiveSplit.LCGoLSplitter\bin\Release
         
     - name: Upload Console App Artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v3
       with:
         name: LCGoLOverlayConsoleInjector
         path: LCGoLOverlayInjector\bin\Release

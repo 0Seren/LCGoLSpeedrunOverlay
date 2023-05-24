@@ -18,6 +18,12 @@ namespace LCGoLOverlayProcess.Server
     public delegate void LevelChanged(GameLevel level);
     [Serializable]
     public delegate void AreaCodeChanged(string areaCode);
+    [Serializable]
+    public delegate void IGTPaused(TimeSpan currentTime);
+    [Serializable]
+    public delegate void IGTUnPaused(TimeSpan previousTime, TimeSpan currentTime);
+    [Serializable]
+    public delegate void IGTDecreased(TimeSpan previousTime, TimeSpan currentTime);
 
     [Serializable]
     public class OverlayInterface : MarshalByRefObject
@@ -30,6 +36,9 @@ namespace LCGoLOverlayProcess.Server
         public event ValidVSyncSettingsChanged ValidVSyncSettingsChanged;
         public event LevelChanged LevelChanged;
         public event AreaCodeChanged AreaCodeChanged;
+        public event IGTPaused IGTPaused;
+        public event IGTUnPaused IGTUnPaused;
+        public event IGTDecreased IGTDecreased;
 
         public void Disconnect()
         {
@@ -74,6 +83,21 @@ namespace LCGoLOverlayProcess.Server
         public void ReportAreaCodeChanged(string areaCode)
         {
             SafeInvokeReportAreaCodeChanged(areaCode);
+        }
+
+        public void ReportIGTPaused(TimeSpan currentTime)
+        {
+            SafeInvokeReportIGTPaused(currentTime);
+        }
+
+        public void ReportIGTUnPaused(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            SafeInvokeReportIGTUnPaused(previousTime, currentTime);
+        }
+
+        public void ReportIGTDecreased(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            SafeInvokeReportIGTDecreased(previousTime, currentTime);
         }
 
         private void SafeInvokeDisconnected()
@@ -231,6 +255,72 @@ namespace LCGoLOverlayProcess.Server
                 catch
                 {
                     AreaCodeChanged -= listener;
+                }
+            }
+        }
+
+        private void SafeInvokeReportIGTPaused(TimeSpan currentTime)
+        {
+            if (IGTPaused is null)
+                return;
+
+            IGTPaused listener = null;
+            var dels = IGTPaused.GetInvocationList();
+
+            foreach (Delegate del in dels)
+            {
+                try
+                {
+                    listener = (IGTPaused)del;
+                    listener.Invoke(currentTime);
+                }
+                catch
+                {
+                    IGTPaused -= listener;
+                }
+            }
+        }
+
+        private void SafeInvokeReportIGTUnPaused(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            if (IGTUnPaused is null)
+                return;
+
+            IGTUnPaused listener = null;
+            var dels = IGTUnPaused.GetInvocationList();
+
+            foreach (Delegate del in dels)
+            {
+                try
+                {
+                    listener = (IGTUnPaused)del;
+                    listener.Invoke(previousTime, currentTime);
+                }
+                catch
+                {
+                    IGTUnPaused -= listener;
+                }
+            }
+        }
+
+        private void SafeInvokeReportIGTDecreased(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            if (IGTDecreased is null)
+                return;
+
+            IGTDecreased listener = null;
+            var dels = IGTDecreased.GetInvocationList();
+
+            foreach (Delegate del in dels)
+            {
+                try
+                {
+                    listener = (IGTDecreased)del;
+                    listener.Invoke(previousTime, currentTime);
+                }
+                catch
+                {
+                    IGTDecreased -= listener;
                 }
             }
         }

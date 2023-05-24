@@ -26,6 +26,7 @@ namespace LCGoLOverlayProcess.Game
         public readonly MemoryWatcher<bool> HasControl = new MemoryWatcher<bool>(new DeepPointer(_lcgolEXEBase, 0x64F3EE));
         private readonly MemoryWatcher<int> _gameTime = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0xCA8EE4));
         private readonly MemoryWatcher<byte> LevelId = new MemoryWatcher<byte>(new DeepPointer(_lcgolEXEBase, 0x65C548));
+        private readonly MemoryWatcher<int> _menuIndicator = new MemoryWatcher<int>(new DeepPointer(_lcgolEXEBase, 0x77B1C8));
 
         public readonly InformationHolder<bool> ValidVSyncSettings;
         public readonly InformationHolder<GameState> State;
@@ -33,6 +34,9 @@ namespace LCGoLOverlayProcess.Game
         public readonly InformationHolder<GameLevel> Level;
 
         private readonly OverlayInterface _overlayInterface;
+
+        private bool _igtHasBeenPaused = true;
+        private bool _igtHasBeenPaused2 = true;
 
         public GameInfo(Process lcgolProcess, OverlayInterface overlayInterface)
         {
@@ -83,6 +87,31 @@ namespace LCGoLOverlayProcess.Game
             {
                 _overlayInterface.ReportAreaCodeChanged(AreaCode.Current);
             }
+
+            // For some reason, there appear to be multiple frames with the same game time. I wonder if this is a triple buffer thing...
+            if (!_igtHasBeenPaused && !GameTime.Changed && State.Current != GameState.InLoadScreen)
+            {
+                _igtHasBeenPaused = true;
+            }
+            else if (_igtHasBeenPaused && !_igtHasBeenPaused2 && !GameTime.Changed)
+            {
+                _igtHasBeenPaused2 = true;
+                _overlayInterface.ReportIGTPaused(GameTime.Current);
+            }
+            else if (_igtHasBeenPaused && GameTime.Current > GameTime.Old)
+            {
+                if (_igtHasBeenPaused2)
+                {
+                    _overlayInterface.ReportIGTUnPaused(GameTime.Old, GameTime.Current);
+                }
+                _igtHasBeenPaused = false;
+                _igtHasBeenPaused2 = false;
+            }
+
+            if (GameTime.Current < GameTime.Old)
+            {
+                _overlayInterface.ReportIGTDecreased(GameTime.Old, GameTime.Current);
+            }
         }
 
         public GameInfoSnapShot GetGameInfoSnapShot()
@@ -127,6 +156,16 @@ namespace LCGoLOverlayProcess.Game
             if (!HasControl.Current)
             {
                 return GameState.InCutscene;
+            }
+
+            if (string.IsNullOrWhiteSpace(AreaCode.Current))
+            {
+                return GameState.InMainMenu;
+            }
+
+            if (_menuIndicator.Current == 14)
+            {
+                return GameState.InLevel;
             }
 
             return GameState.Other;

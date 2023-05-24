@@ -32,6 +32,9 @@ namespace LCGoLInjector
             overlayInterface.ValidVSyncSettingsChanged += Event_VsyncSettingsChanged;
             overlayInterface.LevelChanged += Event_LevelChanged;
             overlayInterface.AreaCodeChanged += Event_AreaCodeChanged;
+            overlayInterface.IGTPaused += Event_IGTPaused;
+            overlayInterface.IGTUnPaused += Event_IGTUnPaused;
+            overlayInterface.IGTDecreased += Event_IGTDecreased;
 
             string channelName = null;
             var overlayServer = RemoteHooking.IpcCreateServer(ref channelName, System.Runtime.Remoting.WellKnownObjectMode.Singleton, overlayInterface);
@@ -127,6 +130,21 @@ namespace LCGoLInjector
         private static void Event_AreaCodeChanged(string areaCode)
         {
             Console.WriteLine($"AreaCode has changed to {areaCode}.");
+        }
+
+        private static void Event_IGTPaused(TimeSpan currentTime)
+        {
+            Console.WriteLine($"IGT has been paused at {currentTime}.");
+        }
+
+        private static void Event_IGTUnPaused(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            Console.WriteLine($"IGT has been unpaused from {previousTime} and is now {currentTime}.");
+        }
+
+        private static void Event_IGTDecreased(TimeSpan previousTime, TimeSpan currentTime)
+        {
+            Console.WriteLine($"IGT has been decreased from {previousTime} and is now {currentTime}.");
         }
     }
 }

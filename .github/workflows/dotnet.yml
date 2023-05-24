@@ -29,8 +29,8 @@ jobs:
     - name: Upload LiveSplit Component Artifact
       uses: actions/upload-artifact@v2.2.3
       with:
-        name: LiveSplit.LCGoL
-        path: LiveSplit.LCGoL\bin\Release
+        name: LiveSplit.LCGoLSplitter
+        path: LiveSplit.LCGoLSplitter\bin\Release
         
     - name: Upload Console App Artifact
       uses: actions/upload-artifact@v2.2.3

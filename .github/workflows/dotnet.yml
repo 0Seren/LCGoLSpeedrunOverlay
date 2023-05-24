@@ -18,16 +18,13 @@ jobs:
       uses: microsoft/setup-msbuild@v1
       
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
-      
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
+      uses: NuGet/setup-nuget@v1
       
     - name: Restore Solution
       run: nuget restore LCGoLSpeedrunOverlay.sln --force
       
     - name: Build Solution
-      run: msbuild.exe LCGoLSpeedrunOverlay.sln /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release"
+      run: msbuild.exe LCGoLSpeedrunOverlay.sln -t:rebuild /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release"
  
     - name: Upload LiveSplit Component Artifact
       uses: actions/upload-artifact@v2.2.3

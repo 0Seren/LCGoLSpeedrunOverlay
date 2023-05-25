@@ -163,7 +163,8 @@ namespace LCGoLOverlayProcess.Game
                 return GameState.InMainMenu;
             }
 
-            if (_menuIndicator.Current == 14)
+            if (_menuIndicator.Current == 14) // This is the thing I am least sure about here.
+                                              // It'd be nice to know what the values of this flag actually mean...
             {
                 return GameState.InLevel;
             }

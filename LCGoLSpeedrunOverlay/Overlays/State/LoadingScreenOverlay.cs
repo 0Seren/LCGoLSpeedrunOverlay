@@ -3,7 +3,6 @@ using System.Drawing;
 using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
-using SharpDX.Mathematics.Interop;
 
 namespace LCGoLOverlayProcess.Overlays.State
 {
@@ -12,7 +11,7 @@ namespace LCGoLOverlayProcess.Overlays.State
         private readonly string _liveSplitSpriteName = nameof(LoadingScreenOverlay) + "|" + nameof(_liveSplitSpriteName) + "|" + Guid.NewGuid().ToString("X");
         private readonly string _liveSplitTextureName = nameof(LoadingScreenOverlay) + "|" + nameof(_liveSplitTextureName) + "|" + Guid.NewGuid().ToString("X");
 
-        private static readonly RawColorBGRA _white = new RawColorBGRA(255, 255, 255, 255);
+        private static readonly SharpDX.ColorBGRA _white = new SharpDX.ColorBGRA(255, 255, 255, 255);
 
         private Rectangle _liveSplitRectangle;
         private readonly LiveSplitHelper _liveSplitHelper;
@@ -57,7 +56,7 @@ namespace LCGoLOverlayProcess.Overlays.State
             {
                 var w = d3d9Device.Viewport.Width;
                 var h = d3d9Device.Viewport.Height;
-                var pos = new RawVector3(w - _liveSplitRectangle.Width, h - _liveSplitRectangle.Height, 0);
+                var pos = new SharpDX.Vector3(w - _liveSplitRectangle.Width, h - _liveSplitRectangle.Height, 0);
 
                 liveSplitSprite.Begin();
 

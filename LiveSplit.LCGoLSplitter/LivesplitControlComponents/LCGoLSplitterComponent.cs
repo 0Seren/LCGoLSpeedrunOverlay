@@ -80,7 +80,7 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             string channelName = null;
             _overlayServer = RemoteHooking.IpcCreateServer(ref channelName, WellKnownObjectMode.Singleton, _overlayInterface);
 
-            string injectionLibraryPath1 = Assembly.GetAssembly(typeof(LCGoLSplitterComponent)).Location;
+            string injectionLibraryPath1 = Assembly.GetAssembly(typeof(InjectionEntryPoint)).Location;
 
             string injectionLibraryPath2 = Path.Combine(Directory.GetParent(injectionLibraryPath1).FullName, Path.GetFileName(injectionLibraryPath1));
 

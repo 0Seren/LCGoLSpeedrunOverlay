@@ -98,4 +98,13 @@
     <Folder Include="UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rmdir /s /q Components
+mkdir Components
+move $(TargetFileName) Components\$(TargetFileName)
+move $(TargetName).pdb Components\$(TargetName).pdb
+del /f UpdateManager.dll
+del /f LiveSplit.Core.dll
+del /f SharpDX.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>

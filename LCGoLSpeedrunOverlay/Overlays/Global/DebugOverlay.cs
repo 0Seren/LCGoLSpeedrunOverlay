@@ -1,7 +1,6 @@
 ﻿using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
-using SharpDX.Mathematics.Interop;
 using System;
 using System.Linq;
 using WinOSExtensions.Extensions;
@@ -11,7 +10,7 @@ namespace LCGoLOverlayProcess.Overlays.Global
     class DebugOverlay : IOverlay
     {
         private const int _lineSpacing = 36;
-        private static readonly RawColorBGRA _white = new RawColorBGRA(255, 255, 255, 255);
+        private static readonly SharpDX.ColorBGRA _white = new SharpDX.ColorBGRA(255, 255, 255, 255);
         private static readonly GameState[] _showPreviousLevelInfoStates = new GameState[]
         {
             GameState.InLoadScreen,

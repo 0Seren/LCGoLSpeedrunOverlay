@@ -1,7 +1,6 @@
 ﻿using LCGoLOverlayProcess.Game;
 using LCGoLOverlayProcess.Helpers;
 using SharpDX.Direct3D9;
-using SharpDX.Mathematics.Interop;
 using System;
 using System.Drawing;
 
@@ -12,7 +11,7 @@ namespace LCGoLOverlayProcess.Overlays.Global
         private readonly string _vsyncStatusSpriteName = $"{nameof(ValidVSyncSettingsOverlay)}|{nameof(_vsyncStatusSpriteName)}|{Guid.NewGuid():X}";
         private readonly string _validVsyncTextureName = $"{nameof(ValidVSyncSettingsOverlay)}|{nameof(_validVsyncTextureName)}|{Guid.NewGuid():X}";
         private readonly string _invalidVsyncTextureName = $"{nameof(ValidVSyncSettingsOverlay)}|{nameof(_invalidVsyncTextureName)}|{Guid.NewGuid():X}";
-        private static readonly RawColorBGRA _white = new RawColorBGRA(255, 255, 255, 255);
+        private static readonly SharpDX.ColorBGRA _white = new SharpDX.ColorBGRA(255, 255, 255, 255);
         private static readonly int _size = 15;
         private static readonly Bitmap _validVSyncSettingsImage = new Bitmap(_size, _size);
         private static readonly Bitmap _invalidVSyncSettingsImage = new Bitmap(_size, _size);
@@ -48,11 +47,11 @@ namespace LCGoLOverlayProcess.Overlays.Global
                 texture = validVsyncTexture;
             }
 
-            var pos = new RawVector3(_size, d3d9Device.Viewport.Height - _size, 0);
+            var pos = new SharpDX.Vector3(_size, d3d9Device.Viewport.Height - _size, 0);
             _rotation = (_rotation + .05f) % 360;
 
             vsyncStatusSprite.Begin();
-            vsyncStatusSprite.Draw(texture, _white, null, new RawVector3(_size/2.0f, _size/2.0f, 0), new RawVector3(0,0,0));
+            vsyncStatusSprite.Draw(texture, _white, null, new SharpDX.Vector3(_size/2.0f, _size/2.0f, 0), new SharpDX.Vector3(0,0,0));
             vsyncStatusSprite.Transform = SharpDX.Matrix.RotationZ(_rotation) * SharpDX.Matrix.Translation(pos);
             vsyncStatusSprite.End();
         }

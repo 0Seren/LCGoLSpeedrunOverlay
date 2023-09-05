@@ -56,11 +56,13 @@ namespace LCGoLOverlayProcess.Overlays.State
             {
                 var w = d3d9Device.Viewport.Width;
                 var h = d3d9Device.Viewport.Height;
-                var pos = new SharpDX.Vector3(w - _liveSplitRectangle.Width, h - _liveSplitRectangle.Height, 0);
+
+                var pos = new SharpDX.Vector3(w, h, 0);
+                var center = new SharpDX.Vector3(_liveSplitRectangle.Width, _liveSplitRectangle.Height, 0);
 
                 liveSplitSprite.Begin();
 
-                liveSplitSprite.Draw(liveSplitTexture, _white, null, null, pos);
+                liveSplitSprite.Draw(liveSplitTexture, _white, null, center, pos);
 
                 liveSplitSprite.End();
             }

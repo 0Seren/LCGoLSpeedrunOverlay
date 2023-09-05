@@ -111,12 +111,13 @@ namespace LCGoLOverlayProcess.Helpers
                 _spriteLookup.Remove(textureName);
             }
 
-            return device.CreateAndRegisterTexture(textureName, (byte[])_converter.ConvertTo(bitmap, typeof(byte[])));
+            return device.CreateAndRegisterTexture(textureName, bitmap);
         }
 
-        private static Texture CreateAndRegisterTexture(this Device device, string textureName, byte[] bytes)
+        private static Texture CreateAndRegisterTexture(this Device device, string textureName, System.Drawing.Bitmap bitmap)
         {
-            var texture = Texture.FromMemory(device, bytes);
+            var bytes = (byte[])_converter.ConvertTo(bitmap, typeof(byte[]));
+            var texture = Texture.FromMemory(device, bytes, bitmap.Width, bitmap.Height, 1, Usage.RenderTarget, Format.BinaryBuffer, Pool.Default, Filter.Default, Filter.Default, 0);
             _disposeCollector.Collect(texture);
             _textureLookup[textureName] = texture;
             return texture;

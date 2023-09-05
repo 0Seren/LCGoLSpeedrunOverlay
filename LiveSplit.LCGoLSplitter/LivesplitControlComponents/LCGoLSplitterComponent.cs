@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Timers;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using EasyHook;
@@ -34,7 +34,9 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
         private GameLevel _currentLevel;
         private GameState _previousGameState;
 
-        private System.Windows.Forms.Timer _updateTimer;
+        private Timer _updateTimer;
+        private object _updateTimerLock = new object();
+        private bool _updateTimerRunning = false;
 
         public LCGoLSplitterComponent(LiveSplitState state)
         {
@@ -57,16 +59,25 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             _currentLevel = GameLevel.None;
             _previousGameState = GameState.Other;
 
-            _updateTimer = new System.Windows.Forms.Timer
+            _updateTimer = new Timer
             {
-                Interval = 15,
-                Enabled = true,
+                Interval = 150,
+                Enabled = true
             };
-            _updateTimer.Tick += PerformUpdate;
+            _updateTimer.Tick += (o, a) => Task.Factory.StartNew(() => PerformUpdate(o, a));
         }
 
         private void PerformUpdate(object source, EventArgs e)
         {
+            lock (_updateTimerLock)
+            {
+                if (_updateTimerRunning)
+                {
+                    return;
+                }
+                _updateTimerRunning = true;
+            }
+
             if (_lcgolProcess is null || _lcgolProcess.HasExited)
             {
                 _lcgolProcess?.Dispose();
@@ -74,6 +85,11 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
 
                 _overlayServer = null;
                 PerformSetup();
+            }
+
+            lock(_updateTimerLock)
+            {
+                _updateTimerRunning = false;
             }
         }
 
@@ -129,7 +145,7 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             return document.CreateElement("Settings");
         }
 
-        public override System.Windows.Forms.Control GetSettingsControl(LayoutMode mode)
+        public override Control GetSettingsControl(LayoutMode mode)
         {
             return null;
         }

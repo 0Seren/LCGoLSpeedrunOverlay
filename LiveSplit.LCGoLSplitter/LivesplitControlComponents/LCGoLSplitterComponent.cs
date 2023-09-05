@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using EasyHook;
@@ -34,6 +34,8 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
         private GameLevel _currentLevel;
         private GameState _previousGameState;
 
+        private System.Windows.Forms.Timer _updateTimer;
+
         public LCGoLSplitterComponent(LiveSplitState state)
         {
             _timer = new TimerModel() { CurrentState = state };
@@ -54,9 +56,16 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             _currentAreaCode = null;
             _currentLevel = GameLevel.None;
             _previousGameState = GameState.Other;
+
+            _updateTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 15,
+                Enabled = true,
+            };
+            _updateTimer.Tick += PerformUpdate;
         }
 
-        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
+        private void PerformUpdate(object source, EventArgs e)
         {
             if (_lcgolProcess is null || _lcgolProcess.HasExited)
             {
@@ -68,6 +77,10 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
             }
         }
 
+        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
+        {
+        }
+
         private void PerformSetup()
         {
             _lcgolProcess = GetProcesses().FirstOrDefault(p => "Lara Croft and the Guardian of Light".Equals(p.GetApplicationName(), StringComparison.OrdinalIgnoreCase));
@@ -75,7 +88,6 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
                 return;
 
             Debug.WriteLine($"LiveSplit.LCGoLSplitter: Found LCGoL Process: {_lcgolProcess.Id}");
-            Thread.Sleep(150);
             Debug.WriteLine($"LiveSplit.LCGoLSplitter: Creating IpcCreateServer...");
             string channelName = null;
             _overlayServer = RemoteHooking.IpcCreateServer(ref channelName, WellKnownObjectMode.Singleton, _overlayInterface);
@@ -101,6 +113,7 @@ namespace LiveSplit.LCGoLSplitter.LiveSplitControlComponents
         public override void Dispose()
         {
             _lcgolProcess?.Dispose();
+            _updateTimer?.Dispose();
             _timer.CurrentState.OnStart -= Timer_OnStart;
             _overlayInterface.MessageArrived -= Event_MessageArrived;
             _overlayInterface.ExceptionOccurred -= Event_ExceptionOccured;
